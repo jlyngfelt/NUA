@@ -1,0 +1,26 @@
+# Operativsystem
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+
+# Dependencies
+node_modules/
+vendor/
+
+# Environment
+.env
+.env.*
+
+# Build/Output
+dist/
+build/
+target/
+
+# Logs
+*.log
+
+# Cache
+.cache/
