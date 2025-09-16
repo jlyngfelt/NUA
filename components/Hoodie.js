@@ -9,30 +9,52 @@ export default function Hoodie() {
   useEffect(() => {
     const scene = new THREE.Scene()
     const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000)
-    const renderer = new THREE.WebGLRenderer()
-    
+    const renderer = new THREE.WebGLRenderer({ antialias: true })
+
     renderer.setSize(window.innerWidth, window.innerHeight)
+    renderer.setClearColor(0x000000, 1)
     mountRef.current.appendChild(renderer.domElement)
 
-    const light = new THREE.DirectionalLight(0xffffff, 1)
-    light.position.set(1, 1, 1)
-    scene.add(light)
+    // Add multiple lights for better visibility
+    const ambientLight = new THREE.AmbientLight(0xffffff, 0.6)
+    scene.add(ambientLight)
+
+    const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8)
+    directionalLight.position.set(10, 10, 5)
+    scene.add(directionalLight)
+
+    const pointLight = new THREE.PointLight(0xffffff, 0.5)
+    pointLight.position.set(-10, -10, -5)
+    scene.add(pointLight)
 
     const gltfLoader = new GLTFLoader()
-    gltfLoader.load('/nua-hoodie-first-test/test-4.gltf', (gltf) => {
-      rootRef.current = gltf.scene
-      scene.add(rootRef.current)
-      gltf.scene.position.set(0, 0, 0)
-      gltf.scene.scale.set(1, 1, 1)
-    })
+    gltfLoader.load(
+      '/nua-hoodie-first-test/test-4.gltf',
+      (gltf) => {
+        console.log('Model loaded successfully')
+        rootRef.current = gltf.scene
+        scene.add(rootRef.current)
 
-    camera.position.z = 30
+        // Get bounding box to position camera properly
+        const box = new THREE.Box3().setFromObject(gltf.scene)
+        const size = box.getSize(new THREE.Vector3()).length()
+        const center = box.getCenter(new THREE.Vector3())
+
+        gltf.scene.position.copy(center.multiplyScalar(-1))
+        camera.position.set(0, 0, size * 2)
+        camera.lookAt(0, 0, 0)
+      },
+      (progress) => {
+        console.log('Loading progress:', (progress.loaded / progress.total * 100) + '%')
+      },
+      (error) => {
+        console.error('Error loading model:', error)
+      }
+    )
 
     function animate() {
       if (rootRef.current) {
-        rootRef.current.rotation.x += 0.01
-        rootRef.current.rotation.y += 0.002
-        rootRef.current.rotation.z += 0.003
+        rootRef.current.rotation.y += 0.005
       }
       renderer.render(scene, camera)
       requestAnimationFrame(animate)
