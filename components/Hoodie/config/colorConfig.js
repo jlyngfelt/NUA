@@ -1,7 +1,7 @@
 // Color configuration for hoodie customization
 
 export const defaultColors = {
-  body: "#2B4C3E", // Default green
+  body: "#7A8471" , // Default green
   hoodInterior: "#E8E8E8", // Default light gray
   zipperDetails: "#4A4A4A" // Default dark gray
 };
@@ -9,7 +9,7 @@ export const defaultColors = {
 // Available colors for each part (3 colors each)
 export const colorOptions = {
   body: [
-    { name: "Green", color: "#2B4C3E" },
+    { name: "Green", color: "#7A8471" },
     { name: "Gray", color: "#8B8B8B" },
     { name: "Cream", color: "#E8DCC6" }
   ],
