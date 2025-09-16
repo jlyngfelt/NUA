@@ -1,0 +1,85 @@
+.container {
+  position: relative;
+  width: 774px;
+  height: 700px;
+}
+
+.zoomControls {
+  position: absolute;
+  bottom: 20px;
+  right: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  z-index: 10;
+}
+
+.zoomControl {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.zoomButton {
+  width: 40px;
+  height: 40px;
+  border: 0px solid #ccc;
+  background-color: transparent;
+  border-radius: 6px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.2s;
+}
+
+.zoomButton:hover {
+  background-color: rgba(255, 255, 255, 1);
+}
+
+.zoomLabel {
+  color: #1C1B1F;
+  font-size: 14px;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.viewControls {
+  position: absolute;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 10;
+}
+
+.viewButtons {
+  display: flex;
+  gap: 10px;
+  position: relative;
+}
+
+.viewButton {
+  padding: 8px 16px;
+  background-color: transparent;
+  color: black;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.indicatorContainer {
+  position: relative;
+  height: 2px;
+  background-color: lightgray;
+  margin-top: 8px;
+  border-radius: 1px;
+}
+
+.indicatorLine {
+  position: absolute;
+  top: 0;
+  height: 100%;
+  background-color: black;
+  border-radius: 1px;
+  transition: left 0.3s ease;
+}
