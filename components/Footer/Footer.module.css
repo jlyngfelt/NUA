@@ -1,0 +1,16 @@
+.footer {
+  width: 100vw;
+  display: flex;
+  padding: 1.25rem 2.5rem 2.5rem 2.5rem;
+  justify-content: space-between;
+  align-items: flex-end;
+  background-color: green;
+  height: 50px;
+
+}
+
+.menuContainer {
+  display: flex;
+  align-items: center;
+  gap: 5rem;
+}
