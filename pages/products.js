@@ -1,18 +1,18 @@
-import Link from 'next/link'
-import {Footer} from '../components/Footer/Footer'
-import { Menu } from '../components/Menu/Menu'
-import { Hoodie } from '../components/Hoodie'
+import Link from "next/link";
+import { Footer } from "../components/Footer/Footer";
+import { Menu } from "../components/Menu/Menu";
+import { Hoodie } from "../components/Hoodie";
 
 export default function ProductSelection() {
   return (
     <div>
-<Menu/>
-      
+      <Menu />
+
       <h1>produktsida</h1>
 
-      <Hoodie/>
-      
-<Footer/>
+      <Hoodie />
+
+      <Footer />
     </div>
-  )
+  );
 }
