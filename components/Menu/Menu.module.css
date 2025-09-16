@@ -2,4 +2,27 @@
     width: 100vw;
     background-color: hotpink;
     height: 50px;
+    display:flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    padding:30px 40px;
+}
+.button {
+display: inline-flex;
+flex-direction: column;
+justify-content: flex-end;
+align-items: flex-start;
+gap: 0.125rem;
+border: none;
+background-color: transparent;
+text-align: center;
+font-size: 1rem;
+font-weight: 400;
+line-height: 1rem;
+}
+
+.button:hover{
+    text-decoration: underline;
+    text-underline-offset: 5px;
 }
