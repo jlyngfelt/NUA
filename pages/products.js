@@ -1,17 +1,15 @@
 import Link from 'next/link'
+import {Footer} from '../components/Footer/Footer'
+import {Menu} from '../components/Menu/Menu'
 
 export default function ProductSelection() {
   return (
     <div>
-       <nav>
-        {/* Din navbar här */}
-      </nav>
+<Menu/>
       
-      <h1>Här gör du dina val</h1>
+      <h1>produktsida</h1>
       
-        <footer>
-        {/* Din footer här */}
-      </footer>
+<Footer/>
     </div>
   )
 }
