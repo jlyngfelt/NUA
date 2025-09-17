@@ -43,6 +43,12 @@ export const ConfiguratorCard = () => {
       
 <FitAndSize/>
 
+<div className={styles.configuratorButtons}>
+    <button>Reset</button>
+    <button>Share link</button>
+    <button>Save design</button>
+</div>
+
     </div>
   );
 };

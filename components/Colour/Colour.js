@@ -9,15 +9,15 @@ export const Material = () => {
     return (
 <div>
 <div className={styles.materialContainer}>
-    <h3>Main material:</h3>
+    <h3>Main colour:</h3>
     
 </div>
 <div className={styles.materialContainer}>
-    <h3>Lining material:</h3>
+    <h3>Lining colour:</h3>
 
 </div>
 <div className={styles.materialContainer}>
-    <h3>Zip & details material:</h3>
+    <h3>Zip & details colour:</h3>
 
 </div>
 
