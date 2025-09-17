@@ -71,7 +71,7 @@ export const FitAndSize = () => {
 <div className={styles.fitContainer}>
 
 </div>
-<ContinueButton/>
+<ContinueButton>Continue</ContinueButton>
 
 </div>
     )
