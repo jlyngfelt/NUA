@@ -29,8 +29,6 @@ export const useHoodieModel = (mountRef, customColors) => {
   const applyCustomColors = () => {
     if (!rootRef.current) return;
 
-    console.log('Applying custom colors:', customColors);
-
     // Find and update material textures
     rootRef.current.traverse((child) => {
       if (child.isMesh && child.material && child.name) {
