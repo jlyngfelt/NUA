@@ -10,7 +10,7 @@ export default function ProductSelection() {
 
       <h1>produktsida</h1>
 
-      {/* <Hoodie /> */}
+      <Hoodie />
 
       <Footer />
     </div>
