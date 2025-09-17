@@ -6,7 +6,7 @@ export const Menu = () => {
     return (
         <nav className={styles.nav}>
 
-<div>
+<div className={styles.buttons}>
 
         <button className={styles.button}>Jackets</button>
         <button className={styles.button}>Trousers</button>
@@ -20,7 +20,7 @@ export const Menu = () => {
         height={25}
       />
 
-<div>
+<div className={styles.buttons}>
 
         <button className={styles.button}>Cart</button>
         <button className={styles.button}>Account</button>

@@ -1,6 +1,6 @@
 .nav {
     width: 100vw;
-    background-color: hotpink;
+    background-color: white;
     height: 50px;
     display:flex;
     flex-direction: row;
@@ -8,6 +8,12 @@
     align-items: center;
     padding:30px 40px;
 }
+
+.buttons {
+    display: flex;
+    gap:1rem;
+}
+
 .button {
 display: inline-flex;
 flex-direction: column;
