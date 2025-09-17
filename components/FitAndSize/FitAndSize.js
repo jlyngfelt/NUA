@@ -10,6 +10,8 @@ export const FitAndSize = () => {
 <div>
 <div className={styles.sizeContainer}>
     <h3>Size:</h3>
+
+<div className={styles.sizes}>
         <button
           className={`${styles.tabMenuButton} ${
             activeTab === 0 ? styles.active : ""
@@ -66,6 +68,7 @@ export const FitAndSize = () => {
         >
           3xl
         </button>
+        </div>
 </div>
 
 <div className={styles.fitContainer}>

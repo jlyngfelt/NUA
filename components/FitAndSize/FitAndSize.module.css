@@ -2,11 +2,28 @@
   margin: 3rem 0 0.5rem 0;
 }
 
+.sizeContainer {
+    display:flex;
+    flex-direction: column;
+}
+
+.sizes {
+    display: flex;
+    justify-content: space-between;
+}
+
+.sizeContainer button {
+    border: 1px solid black;
+    display:flex;
+    
+}
+
 .tabMenuButton {
   display: inline-flex;
   flex-direction: column;
-  justify-content: flex-end;
-  align-items: flex-start;
+  
+  justify-content: space-between;
+  align-items: center;
   gap: 0.125rem;
   border: none;
   background-color: transparent;
@@ -15,8 +32,8 @@
   font-weight: 400;
   line-height: 1rem;
   cursor: pointer;
-  height: 2rem;
-  padding: 1px 12px 1px 0px;
+ width: 4.3125rem;
+ padding: 0.5rem 1.625rem;
 }
 
 .tabMenuButton.active {
