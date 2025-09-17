@@ -1,0 +1,23 @@
+.button {
+  background-color: #000;
+  color: white;
+  display: flex;
+  width: 36.25rem;
+  padding: 0.875rem 14.625rem;
+  justify-content: center;
+  align-items: center;
+  gap: 0.625rem;
+  border: 1px solid #000;
+}
+
+.button:hover {
+  display: flex;
+  width: 36.25rem;
+  padding: 0.875rem 14.625rem;
+  justify-content: center;
+  align-items: center;
+  gap: 0.625rem;
+  border: 1px solid #000;
+  color: black;
+  background: #fff;
+}
