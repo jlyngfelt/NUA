@@ -1,0 +1,23 @@
+.descriptionContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 2.5rem;
+  margin: 2.5rem;
+  max-width: 65vw;
+}
+
+.descriptionContainer h3 {
+  font-size: 1.25rem;
+  font-style: normal;
+  font-weight: 700;
+  line-height: normal;
+  margin:0 0 0.75rem 0;
+}
+.descriptionContainer h4 {
+  font-size: 1rem;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+  margin:0;
+}
+

@@ -2,6 +2,7 @@ import Image from "next/image";
 import styles from "./ConfiguratorCard.module.css";
 import {useState} from 'react';
 import { FitAndSize } from "../FitAndSize/FitAndSize";
+import { Description } from '../Description/Description';
 
 export const ConfiguratorCard = () => {
   const [activeTab, setActiveTab] = useState(0);
