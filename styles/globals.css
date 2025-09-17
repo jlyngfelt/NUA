@@ -14,3 +14,10 @@ html {
     box-sizing: border-box;
     
 }
+
+.mainContent {
+    display: flex;
+    background-color: hotpink;
+    width: 100vw;
+    height: 60px;
+}

@@ -10,8 +10,8 @@ export const ConfiguratorCard = () => {
   return (
     <div className={styles.configuratorCard}>
       <div className={styles.mainInfo}>
-        <h1>Nua Hoodie</h1>
-        <h1>450kr</h1>
+        <h1>Nua hoodie</h1>
+        <h1>450 kr</h1>
       </div>
       <h2>Estimated delivery time: 23 Sep 2025</h2>
 

@@ -3,7 +3,7 @@ import styles from "./Material.module.css";
 import {useState} from 'react';
 import { ContinueButton } from "../button/continueButton/ContinueButton";
 
-export const Material = () => {
+export const Colour = () => {
     const [activeTab, setActiveTab] = useState(0);
 
     return (
