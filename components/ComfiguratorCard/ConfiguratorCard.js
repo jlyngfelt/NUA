@@ -1,6 +1,7 @@
 import Image from "next/image";
 import styles from "./ConfiguratorCard.module.css";
 import {useState} from 'react';
+import { FitAndSize } from "../FitAndSize/FitAndSize";
 
 export const ConfiguratorCard = () => {
   const [activeTab, setActiveTab] = useState(0);
@@ -39,7 +40,8 @@ export const ConfiguratorCard = () => {
           3.Colour
         </button>
       </div>
-          
+      
+<FitAndSize/>
 
     </div>
   );
