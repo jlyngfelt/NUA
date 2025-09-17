@@ -34,18 +34,23 @@ export const useHoodieModel = (mountRef, customColors) => {
     // Find and update material textures
     rootRef.current.traverse((child) => {
       if (child.isMesh && child.material && child.name) {
+        // Debug: log all mesh names to understand the model structure
+        console.log('Mesh name:', child.name);
+
         // Determine which part this mesh belongs to
         let partType = null;
 
         // More specific matching based on actual mesh names we found
-        if (child.name.includes('Zipper') || child.name.includes('ZipperPattern')) {
+        if (child.name.includes('Zipper')) {
           partType = 'zipperDetails';
         } else if (child.name.includes('Body') || child.name.includes('Sleeves') ||
             child.name.includes('Hood_outside') || child.name.includes('Cuff')) {
           partType = 'body';
         } else if (child.name.includes('Hood_inside') || child.name.includes('Lining') ||
                    child.name.includes('Trim') || child.name.includes('Stopper') ||
-                   child.name.includes('Piping') || child.name.includes('Strap')) {
+                   child.name.includes('Piping') || child.name.includes('Strap') ||
+                   child.name.includes('String') || child.name.includes('string') ||
+                   child.name.includes('Cord') || child.name.includes('cord')) {
           partType = 'hoodInterior';
         }
 
@@ -69,29 +74,41 @@ export const useHoodieModel = (mountRef, customColors) => {
             // Zipper/metallic components should always use pure color (no texture)
             child.material.map = null;
             child.material.color = color;
-            child.material.metalness = 0.8; // More metallic for zipper parts
-            child.material.roughness = 0.2; // Smoother for metal/plastic
+            child.material.metalness = 0.9; // High metallic value for metal look
+            child.material.roughness = 0.2; // Smooth but not too reflective to avoid shader issues
+
+            // Ensure proper material type for metallic rendering
+            if (child.material.isMeshStandardMaterial) {
+              // Keep it simple to avoid shader compilation issues
+              child.material.emissive = new THREE.Color(0x111111); // Slight emissive for metallic glow
+            }
           } else if (partType === 'body') {
             // For main fabric, always use pure colors to avoid texture color interference
             child.material.map = null;
             child.material.color = color;
             child.material.metalness = 0.1;
             child.material.roughness = 0.8;
-          } else if (child.material.userData.originalMap) {
-            // For other fabric parts (hood interior), handle light vs dark colors differently
-            const colorLuminance = color.r * 0.299 + color.g * 0.587 + color.b * 0.114;
+          } else if (partType === 'hoodInterior') {
+            // Handle hood interior parts including stoppers and strings
+            // Always remove texture and apply pure color for consistent results
+            child.material.map = null;
+            child.material.color = color;
 
-            if (colorLuminance > 0.7) { // Light colors (white, light gray, etc.)
-              child.material.map = null;
-              child.material.color = color;
+            // Different material properties based on specific part type
+            if (child.name.includes('Stopper') || child.name.includes('String') ||
+                child.name.includes('string') || child.name.includes('Cord') ||
+                child.name.includes('cord')) {
+              // Stoppers and strings: slightly more plastic/rubber-like
+              child.material.metalness = 0.2;
+              child.material.roughness = 0.6;
+            } else {
+              // Other fabric parts (lining, trim, etc.)
               child.material.metalness = 0.1;
               child.material.roughness = 0.8;
-            } else { // Darker colors can use texture tinting
-              child.material.map = child.material.userData.originalMap;
-              child.material.color = color;
             }
           } else {
-            // For materials without textures, just set the color
+            // For materials without specific handling, just set the color
+            child.material.map = null;
             child.material.color = color;
             child.material.metalness = 0.1;
             child.material.roughness = 0.8;
@@ -176,6 +193,7 @@ export const useHoodieModel = (mountRef, customColors) => {
       powerPreference: "high-performance"
     });
 
+
     renderer.setSize(774, 700);
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     renderer.setClearColor(0xc4c4c4, 1);
@@ -189,11 +207,11 @@ export const useHoodieModel = (mountRef, customColors) => {
     mountRef.current.appendChild(renderer.domElement);
 
     // Studio-quality lighting setup for optimal hoodie presentation
-    const ambientLight = new THREE.AmbientLight(0xffffff, 0.3);
+    const ambientLight = new THREE.AmbientLight(0xffffff, 0.4);
     scene.add(ambientLight);
 
     // Key light - main directional light positioned like studio photography
-    const keyLight = new THREE.DirectionalLight(0xffffff, 2.0);
+    const keyLight = new THREE.DirectionalLight(0xffffff, 1.8);
     keyLight.position.set(8, 12, 6);
     keyLight.castShadow = true;
     keyLight.shadow.mapSize.width = 4096;
