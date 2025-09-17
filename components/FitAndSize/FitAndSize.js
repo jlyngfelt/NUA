@@ -1,6 +1,7 @@
 import Image from "next/image";
 import styles from "./FitAndSize.module.css";
 import {useState} from 'react';
+import {ContinueButton} from '../button/continueButton/ContinueButton';
 
 export const FitAndSize = () => {
     const [activeTab, setActiveTab] = useState(0);
@@ -69,10 +70,8 @@ export const FitAndSize = () => {
 
 <div className={styles.fitContainer}>
 
-    <button>
-        Continue
-    </button>
 </div>
+<ContinueButton/>
 
 </div>
     )
