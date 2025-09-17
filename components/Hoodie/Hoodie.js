@@ -1,38 +1,38 @@
-import { useRef, useState } from "react";
-import styles from "./Hoodie.module.css";
-import { ColorCustomization } from './components/ColorCustomization';
-import { CameraControls } from './components/CameraControls';
-import { useHoodieModel } from './hooks/useHoodieModel';
-import { defaultColors } from './config/colorConfig';
+// import { useRef, useState } from "react";
+// import styles from "./Hoodie.module.css";
+// import { ColorCustomization } from './components/ColorCustomization';
+// import { CameraControls } from './components/CameraControls';
+// import { useHoodieModel } from './hooks/useHoodieModel';
+// import { defaultColors } from './config/colorConfig';
 
-export const Hoodie = () => {
-  const mountRef = useRef(null);
-  const [customColors, setCustomColors] = useState(defaultColors);
+// export const Hoodie = () => {
+//   const mountRef = useRef(null);
+//   const [customColors, setCustomColors] = useState(defaultColors);
 
-  // Initialize 3D model and get control functions
-  const { setCameraView, handleZoom } = useHoodieModel(mountRef, customColors);
+//   // Initialize 3D model and get control functions
+//   const { setCameraView, handleZoom } = useHoodieModel(mountRef, customColors);
 
-  // Handle color changes
-  const handleColorChange = (part, color) => {
-    setCustomColors(prev => ({
-      ...prev,
-      [part]: color
-    }));
-  };
+//   // Handle color changes
+//   const handleColorChange = (part, color) => {
+//     setCustomColors(prev => ({
+//       ...prev,
+//       [part]: color
+//     }));
+//   };
 
-  return (
-    <div className={styles.container}>
-      <div ref={mountRef} />
+//   return (
+//     <div className={styles.container}>
+//       <div ref={mountRef} />
 
-      <ColorCustomization
-        customColors={customColors}
-        onColorChange={handleColorChange}
-      />
+//       <ColorCustomization
+//         customColors={customColors}
+//         onColorChange={handleColorChange}
+//       />
 
-      <CameraControls
-        onViewChange={setCameraView}
-        onZoom={handleZoom}
-      />
-    </div>
-  );
-};
+//       <CameraControls
+//         onViewChange={setCameraView}
+//         onZoom={handleZoom}
+//       />
+//     </div>
+//   );
+// };
