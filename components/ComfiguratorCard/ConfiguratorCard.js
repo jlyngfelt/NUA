@@ -2,10 +2,17 @@ import Image from "next/image";
 import styles from "./ConfiguratorCard.module.css";
 import {useState} from 'react';
 import { FitAndSize } from "../FitAndSize/FitAndSize";
+import { Material } from "../Material/Material";
+import { Colour } from "../Colour/Colour";
 import { Description } from '../Description/Description';
 
 export const ConfiguratorCard = () => {
   const [activeTab, setActiveTab] = useState(0);
+
+  function handleOnClick() {
+    setActiveTab(activeTab+1)
+    }
+  
 
   return (
     <div className={styles.configuratorCard}>
@@ -42,7 +49,14 @@ export const ConfiguratorCard = () => {
         </button>
       </div>
       
-<FitAndSize/>
+
+{(() => {
+  if (activeTab === 0) return <FitAndSize handleOnClick={handleOnClick}/>;
+  if (activeTab === 1) return <Material handleOnClick={handleOnClick}/>;
+  return <Colour handleOnClick={handleOnClick}/>;
+})()}
+
+
 
 <div className={styles.configuratorButtons}>
     <button>Reset</button>
