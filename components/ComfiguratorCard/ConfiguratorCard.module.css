@@ -1,6 +1,7 @@
 .configuratorCard {
   padding: 1.25rem 2.5rem;
-  background: grey;
+  background: white;
+  
   width: 50vw;
 }
 
@@ -65,15 +66,20 @@
     flex:1;
     gap: 0.625rem;
     margin-top: 0.625rem;
+    width: 100%; 
+    justify-content: space-between;
+    align-self: stretch;
+
+  
 }
 
 .configuratorButtons button {
     display: flex;
-width: 11.66669rem;
-/* padding: 0.875rem 14.625rem; */
+    flex:1;
+/* min-width: 11.66669rem; */
 justify-content: center;
 align-items: center;
 border: 1px solid #000;
-padding: 0.875rem 0;
+padding: 0.875rem 1rem;
 }
 

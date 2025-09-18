@@ -11,9 +11,10 @@ export default function ProductSelection() {
       <Menu />
 
       <h1>produktsida</h1>
-
-      <ConfiguratorCard/>
+        <main >
       <Hoodie />
+      <ConfiguratorCard/>
+        </main>
         <Description/>
       <Footer />
     </div>

@@ -1,18 +1,20 @@
 .button {
   background-color: #000;
   color: white;
-  display: flex;
-  width: 36.25rem;
-  padding: 0.875rem 14.625rem;
+  display: inline-flex;
+  /* width: 36.25rem; */
+  /* padding: 0.875rem 14.625rem; */
   justify-content: center;
   align-items: center;
   gap: 0.625rem;
   border: 1px solid #000;
+  width: 100%; /* Eller max-width: 36.25rem; */
+  padding: 0.875rem 1rem;
 }
 
 .button:hover {
   display: flex;
-  width: 36.25rem;
+  
   padding: 0.875rem 14.625rem;
   justify-content: center;
   align-items: center;
