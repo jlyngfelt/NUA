@@ -1,5 +1,5 @@
-import { colorOptions } from '../config/colorConfig';
-import styles from './ColorCustomization.module.css';
+import { colorOptions } from "../config/colorConfig";
+import styles from "./ColorCustomization.module.css";
 
 export const ColorCustomization = ({ customColors, onColorChange }) => {
   return (
@@ -10,15 +10,16 @@ export const ColorCustomization = ({ customColors, onColorChange }) => {
         <div className={styles.colorOptions}>
           {colorOptions.body.map((option) => (
             <div key={option.name}>
-            <button
-              
-              onClick={() => onColorChange('body', option.color)}
-              className={`${styles.colorButton} ${customColors.body === option.color ? styles.active : ""}`}
-              style={{ backgroundColor: option.color }}
-              title={option.name}
-            />
-          <h2 className={styles.colorName}>{option.name}</h2>
-          </div>
+              <button
+                onClick={() => onColorChange("body", option.color)}
+                className={`${styles.colorButton} ${
+                  customColors.body === option.color ? styles.active : ""
+                }`}
+                style={{ backgroundColor: option.color }}
+                title={option.name}
+              />
+              <h2 className={styles.colorName}>{option.name}</h2>
+            </div>
           ))}
         </div>
       </div>
@@ -29,15 +30,18 @@ export const ColorCustomization = ({ customColors, onColorChange }) => {
         <div className={styles.colorOptions}>
           {colorOptions.hoodInterior.map((option) => (
             <div key={option.name}>
-            <button
-              
-              onClick={() => onColorChange('hoodInterior', option.color)}
-              className={`${styles.colorButton} ${customColors.hoodInterior === option.color ? styles.active : ""}`}
-              style={{ backgroundColor: option.color }}
-              title={option.name}
-            />
-            <h2 className={styles.colorName}>{option.name}</h2>
-          </div>
+              <button
+                onClick={() => onColorChange("hoodInterior", option.color)}
+                className={`${styles.colorButton} ${
+                  customColors.hoodInterior === option.color
+                    ? styles.active
+                    : ""
+                }`}
+                style={{ backgroundColor: option.color }}
+                title={option.name}
+              />
+              <h2 className={styles.colorName}>{option.name}</h2>
+            </div>
           ))}
         </div>
       </div>
@@ -48,15 +52,18 @@ export const ColorCustomization = ({ customColors, onColorChange }) => {
         <div className={styles.colorOptions}>
           {colorOptions.zipperDetails.map((option) => (
             <div key={option.name}>
-            <button
-              
-              onClick={() => onColorChange('zipperDetails', option.color)}
-              className={`${styles.colorButton} ${customColors.zipperDetails === option.color ? styles.active : ""}`}
-              style={{ backgroundColor: option.color }}
-              title={option.name}
-            />
-            <h2 className={styles.colorName}>{option.name}</h2>
-          </div>
+              <button
+                onClick={() => onColorChange("zipperDetails", option.color)}
+                className={`${styles.colorButton} ${
+                  customColors.zipperDetails === option.color
+                    ? styles.active
+                    : ""
+                }`}
+                style={{ backgroundColor: option.color }}
+                title={option.name}
+              />
+              <h2 className={styles.colorName}>{option.name}</h2>
+            </div>
           ))}
         </div>
       </div>
