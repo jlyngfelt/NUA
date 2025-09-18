@@ -5,29 +5,22 @@ import { CameraControls } from './components/CameraControls';
 import { useHoodieModel } from './hooks/useHoodieModel';
 import { defaultColors } from './config/colorConfig';
 
-export const Hoodie = () => {
+export const Hoodie = ({ customColors, onColorChange }) => {
   const mountRef = useRef(null);
-  const [customColors, setCustomColors] = useState(defaultColors);
 
   // Initialize 3D model and get control functions
   const { setCameraView, handleZoom } = useHoodieModel(mountRef, customColors);
 
-  // Handle color changes
-  const handleColorChange = (part, color) => {
-    setCustomColors(prev => ({
-      ...prev,
-      [part]: color
-    }));
-  };
+
 
   return (
     <div className={styles.container}>
       <div ref={mountRef} />
 
-      <ColorCustomization
+      {/* <ColorCustomization
         customColors={customColors}
         onColorChange={handleColorChange}
-      />
+      /> */}
 
       <CameraControls
         onViewChange={setCameraView}
