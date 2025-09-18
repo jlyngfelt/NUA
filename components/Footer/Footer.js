@@ -5,7 +5,7 @@ export const Footer = () => {
   return (
     <footer className={styles.footer}>
       <div className={styles.buttonLogoGroup}>
-        <Image src="/icons/LogoLarge.png" alt="Logo" width={177} height={55} />
+        <Image src="/icons/LogoLarge.png" alt="Logo" width={193} height={80} />
 
         <div className={styles.menuContainer}>
           <div className={styles.buttonGroup}>
