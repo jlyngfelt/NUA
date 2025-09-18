@@ -49,13 +49,13 @@ export const ConfiguratorCard = () => {
         </button>
       </div>
       
-
-{(() => {
-  if (activeTab === 0) return <FitAndSize handleOnClick={handleOnClick}/>;
-  if (activeTab === 1) return <Material handleOnClick={handleOnClick}/>;
-  return <Colour handleOnClick={handleOnClick}/>;
-})()}
-
+{
+  {
+    0: <FitAndSize handleOnClick={handleOnClick}/>,
+    1: <Material handleOnClick={handleOnClick}/>,
+    2: <Colour handleOnClick={handleOnClick}/>
+  }[activeTab]
+}
 
 
 <div className={styles.configuratorButtons}>
