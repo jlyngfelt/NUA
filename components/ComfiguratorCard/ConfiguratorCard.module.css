@@ -52,10 +52,7 @@
   padding-bottom: 0.5rem;
 }
 
-.tabMenuButton:hover {
-    border-bottom: 2px solid black;
-    font-weight: 600;
-}
+
 .tabMenuButton.active {
     border-bottom: 2px solid black;
     font-weight: 600;
