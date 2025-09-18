@@ -3,7 +3,7 @@ import styles from "./FitAndSize.module.css";
 import {useState} from 'react';
 import {ContinueButton} from '../button/continueButton/ContinueButton';
 
-export const FitAndSize = () => {
+export const FitAndSize = ({handleOnClick}) => {
     const [activeTab, setActiveTab] = useState(0);
 
     return (
@@ -74,7 +74,7 @@ export const FitAndSize = () => {
 <div className={styles.fitContainer}>
 
 </div>
-<ContinueButton>Continue</ContinueButton>
+<ContinueButton onClick={handleOnClick}>Continue</ContinueButton>
 
 </div>
     )

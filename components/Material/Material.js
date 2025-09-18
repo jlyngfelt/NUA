@@ -3,7 +3,7 @@ import styles from "./Material.module.css";
 import {useState} from 'react';
 import { ContinueButton } from "../button/continueButton/ContinueButton";
 
-export const Material = () => {
+export const Material = ({handleOnClick}) => {
     const [activeTab, setActiveTab] = useState(0);
 
     return (
@@ -21,7 +21,7 @@ export const Material = () => {
 
 </div>
 
-<ContinueButton>Continue</ContinueButton>
+<ContinueButton onClick={handleOnClick}>Continue</ContinueButton>
 </div>
     )
 }
