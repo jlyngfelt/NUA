@@ -1,0 +1,79 @@
+.configuratorCard {
+  padding: 1.25rem 2.5rem;
+  background: white;
+
+  width: 50vw;
+}
+
+.mainInfo {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.mainInfo h1 {
+  font-size: 1.75rem;
+  font-style: normal;
+  font-weight: 500;
+  line-height: normal;
+  margin: 0;
+}
+
+.configuratorCard h2 {
+  font-size: 1rem;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+  margin: 0.5rem 0;
+}
+
+.tabMenu {
+  display: flex;
+}
+
+.tabMenuButton {
+  display: inline-flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: flex-start;
+  gap: 0.125rem;
+  border: none;
+  background-color: transparent;
+  text-align: center;
+  font-size: 1rem;
+  font-weight: 400;
+  line-height: 1rem;
+  cursor: pointer;
+  height: 2rem;
+  border-bottom: 2px solid #c4c4c4;
+  /* padding-right: 15vw; */
+  flex: 1; /* Lägg till denna */
+  padding-right: 0;
+  padding-bottom: 0.5rem;
+}
+
+.tabMenuButton.active {
+  border-bottom: 2px solid black;
+  font-weight: 600;
+}
+
+.configuratorButtons {
+  display: flex;
+  flex: 1;
+  gap: 0.625rem;
+  margin-top: 0.625rem;
+  width: 100%;
+  justify-content: space-between;
+  align-self: stretch;
+}
+
+.configuratorButtons button {
+  display: flex;
+  flex: 1;
+  /* min-width: 11.66669rem; */
+  justify-content: center;
+  align-items: center;
+  border: 1px solid #000;
+  padding: 0.875rem 1rem;
+  cursor: pointer;
+}

@@ -1,17 +1,12 @@
 .colorCustomizationPanel {
-  position: absolute;
-  top: 20px;
-  left: 20px;
-  background-color: rgba(255, 255, 255, 0.95);
   border-radius: 12px;
-  padding: 20px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  padding: 1.5rem;
   z-index: 10;
-  max-width: 280px;
 }
 
 .colorSection {
-  margin-bottom: 20px;
+  margin-bottom: 2rem;
+  gap: 0.625rem;
 }
 
 .colorSection:last-child {
@@ -20,20 +15,21 @@
 
 .colorSection h4 {
   margin: 0 0 10px 0;
-  font-size: 14px;
-  font-weight: 600;
-  color: #333;
+  font-size: 1rem;
+  font-weight: 700;
+  color: #2E3228;
 }
 
 .colorOptions {
   display: flex;
-  gap: 8px;
+  gap: 1.359rem;
   flex-wrap: wrap;
+  
 }
 
 .colorButton {
-  width: 32px;
-  height: 32px;
+  height: 4rem;
+  width: 4rem;
   border: 2px solid #ddd;
   border-radius: 50%;
   cursor: pointer;
@@ -51,7 +47,11 @@
   border-width: 3px;
 }
 
-.colorButton.active::after {
+.colorName {
+  text-align: center;
+}
+
+/* .colorButton.active::after {
   content: '';
   position: absolute;
   top: 50%;
@@ -62,4 +62,4 @@
   background-color: rgba(255, 255, 255, 0.9);
   border-radius: 50%;
   box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.3);
-}
+} */

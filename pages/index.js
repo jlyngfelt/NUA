@@ -1,29 +1,18 @@
 import Link from "next/link";
 import Hoodie from "../components/Hoodie";
-import {Footer} from '../components/Footer/Footer'
-import {Menu} from '../components/Menu/Menu'
-
+import Image from "next/image";
+import { Footer } from "../components/Footer/Footer";
+import { Menu } from "../components/Menu/Menu";
+import { Landingpage } from "../components/Landingpage/Landingpage";
 
 export default function Home() {
   return (
     <div>
-      <Menu/>
+      <Menu />
 
-      <div>
-        <div>
-          <img src="/bild1.jpg" alt="Bild 1" />
-          <button disabled>Browse collection</button>
-        </div>
+<Landingpage/>
 
-        <div>
-          <img src="/bild2.jpg" alt="Bild 2" />
-          <Link href="/products">
-            <button>Design your own</button>
-          </Link>
-        </div>
-      </div>
-      
-      <Footer/>
+      <Footer />
     </div>
   );
 }
