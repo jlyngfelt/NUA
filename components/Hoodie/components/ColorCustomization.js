@@ -6,48 +6,57 @@ export const ColorCustomization = ({ customColors, onColorChange }) => {
     <div className={styles.colorCustomizationPanel}>
       {/* Main fabric colour */}
       <div className={styles.colorSection}>
-        <h4>Main fabric colour</h4>
+        <h4>Main colour:</h4>
         <div className={styles.colorOptions}>
           {colorOptions.body.map((option) => (
+            <div key={option.name}>
             <button
-              key={option.name}
+              
               onClick={() => onColorChange('body', option.color)}
               className={`${styles.colorButton} ${customColors.body === option.color ? styles.active : ""}`}
               style={{ backgroundColor: option.color }}
               title={option.name}
             />
+          <h2 className={styles.colorName}>{option.name}</h2>
+          </div>
           ))}
         </div>
       </div>
 
       {/* Details */}
       <div className={styles.colorSection}>
-        <h4>Details</h4>
+        <h4>Lining Colour:</h4>
         <div className={styles.colorOptions}>
           {colorOptions.hoodInterior.map((option) => (
+            <div key={option.name}>
             <button
-              key={option.name}
+              
               onClick={() => onColorChange('hoodInterior', option.color)}
               className={`${styles.colorButton} ${customColors.hoodInterior === option.color ? styles.active : ""}`}
               style={{ backgroundColor: option.color }}
               title={option.name}
             />
+            <h2 className={styles.colorName}>{option.name}</h2>
+          </div>
           ))}
         </div>
       </div>
 
       {/* Metallics/plastic */}
       <div className={styles.colorSection}>
-        <h4>Metallics/plastic</h4>
+        <h4>Zip & details colour:</h4>
         <div className={styles.colorOptions}>
           {colorOptions.zipperDetails.map((option) => (
+            <div key={option.name}>
             <button
-              key={option.name}
+              
               onClick={() => onColorChange('zipperDetails', option.color)}
               className={`${styles.colorButton} ${customColors.zipperDetails === option.color ? styles.active : ""}`}
               style={{ backgroundColor: option.color }}
               title={option.name}
             />
+            <h2 className={styles.colorName}>{option.name}</h2>
+          </div>
           ))}
         </div>
       </div>

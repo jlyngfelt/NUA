@@ -6,7 +6,7 @@ import { Material } from "../Material/Material";
 import { Colour } from "../Colour/Colour";
 import { Description } from '../Description/Description';
 
-export const ConfiguratorCard = () => {
+export const ConfiguratorCard = ({ customColors, onColorChange }) => {
   const [activeTab, setActiveTab] = useState(0);
 
   function handleOnClick() {
@@ -53,7 +53,7 @@ export const ConfiguratorCard = () => {
   {
     0: <FitAndSize handleOnClick={handleOnClick}/>,
     1: <Material handleOnClick={handleOnClick}/>,
-    2: <Colour handleOnClick={handleOnClick}/>
+    2: <Colour customColors={customColors} onColorChange={onColorChange} handleOnClick={handleOnClick}/>
   }[activeTab]
 }
 
