@@ -1,27 +1,25 @@
 import Image from "next/image";
 import styles from "./Colour.module.css";
-import {useState} from 'react';
+import { useState } from "react";
 import { ContinueButton } from "../button/continueButton/ContinueButton";
+import { ColorCustomization } from "../Hoodie/components/ColorCustomization";
 
-export const Colour = ({handleOnClick}) => {
-    const [activeTab, setActiveTab] = useState(0);
 
-    return (
-<div>
-<div className={styles.colourContainer}>
-    <h3>Main colour:</h3>
-    
-</div>
-<div className={styles.colourContainer}>
-    <h3>Lining colour:</h3>
 
-</div>
-<div className={styles.colourContainer}>
-    <h3>Zip & details colour:</h3>
 
-</div>
+export const Colour = ({ customColors, onColorChange, handleOnClick }) => {
+  const [activeTab, setActiveTab] = useState(0);
 
-<ContinueButton onClick={handleOnClick}>Add to cart</ContinueButton>
-</div>
-    )
-}
+
+  return (
+    <div>
+
+      <ColorCustomization
+        customColors={customColors}
+        onColorChange={onColorChange}
+      />
+
+      <ContinueButton onClick={handleOnClick}>Add to cart</ContinueButton>
+    </div>
+  );
+};
