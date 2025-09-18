@@ -16,8 +16,8 @@ export const Menu = () => {
 <Image 
         src="/icons/LogoSmall.png" 
         alt="Logo"
-        width={85}
-        height={25}
+        width={91}
+        height={38}
       />
 
 <div className={styles.buttons}>
