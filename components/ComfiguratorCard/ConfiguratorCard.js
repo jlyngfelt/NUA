@@ -6,7 +6,7 @@ import { Material } from "../Material/Material";
 import { Colour } from "../Colour/Colour";
 import { Description } from '../Description/Description';
 
-export const ConfiguratorCard = ({ customColors, onColorChange }) => {
+export const ConfiguratorCard = ({ customColors, onColorChange, onReset }) => {
   const [activeTab, setActiveTab] = useState(0);
 
   function handleOnClick() {
@@ -59,7 +59,7 @@ export const ConfiguratorCard = ({ customColors, onColorChange }) => {
 
 
 <div className={styles.configuratorButtons}>
-    <button>Reset</button>
+    <button onClick={onReset}>Reset</button>
     <button>Share link</button>
     <button>Save design</button>
 </div>
