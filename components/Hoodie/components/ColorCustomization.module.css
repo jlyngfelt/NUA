@@ -17,20 +17,19 @@
   margin: 0 0 10px 0;
   font-size: 1rem;
   font-weight: 700;
-  color: #2E3228;
+  color: #2e3228;
 }
 
 .colorOptions {
   display: flex;
   gap: 1.359rem;
   flex-wrap: wrap;
-  
 }
 
 .colorButton {
   height: 4rem;
   width: 4rem;
-  border: 2px solid #ddd;
+  border: none;
   border-radius: 50%;
   cursor: pointer;
   transition: all 0.2s ease;
@@ -39,12 +38,12 @@
 
 .colorButton:hover {
   transform: scale(1.1);
-  border-color: #999;
 }
 
 .colorButton.active {
-  border-color: #333;
-  border-width: 3px;
+  outline: 2px solid #333;
+  outline-offset: 2px;
+  box-shadow: 5.436px 5.436px 5.436px 0 rgba(0, 0, 0, 0.4) inset;
 }
 
 .colorName {

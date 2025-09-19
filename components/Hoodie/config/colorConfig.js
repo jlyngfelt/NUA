@@ -10,18 +10,19 @@ export const defaultColors = {
 export const colorOptions = {
   body: [
     { name: "Green", color: "#7A8471" },
-    { name: "Gray", color: "#8B8B8B" },
+    { name: "Grey", color: "#8B8B8B" },
     { name: "Cream", color: "#E8DCC6" }
   ],
   hoodInterior: [
     { name: "Green", color: "#7A8471" },
+    { name: "Grey", color: "#8B8B8B" },
     { name: "Black", color: "#1C1C1C" },
     { name: "Cream", color: "#E8DCC6" }
   ],
   zipperDetails: [
     { name: "Bronze", color: "#CD7F32" },
-    { name: "Dark Gray", color: "#4A4A4A" },
-    { name: "Light Gray", color: "#8B8B8B" }
+    { name: "Dark Grey", color: "#4A4A4A" },
+    { name: "Light Grey", color: "#8B8B8B" }
   ]
 };
 
