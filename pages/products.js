@@ -18,6 +18,10 @@ export default function ProductSelection() {
       }));
     };
 
+    const handleReset = () => {
+      setCustomColors(defaultColors);
+    };
+
   return (
     <div>
       <Menu />
@@ -25,7 +29,7 @@ export default function ProductSelection() {
       <NavigationBanner/>
         <main >
       <Hoodie customColors={customColors} onColorChange={handleColorChange}/>
-      <ConfiguratorCard customColors={customColors} onColorChange={handleColorChange} />
+      <ConfiguratorCard customColors={customColors} onColorChange={handleColorChange} onReset={handleReset} />
         </main>
         <Description/>
       <Footer />
