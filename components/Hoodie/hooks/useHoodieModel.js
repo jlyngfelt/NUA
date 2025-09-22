@@ -3,56 +3,153 @@ import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { colorwayTextures } from '../config/colorConfig';
+import { getTexturePaths, defaultMaterialSelections } from '../config/materialConfig';
 
-export const useHoodieModel = (mountRef, customColors) => {
+export const useHoodieModel = (mountRef, customColors, materialSelections = defaultMaterialSelections) => {
   const rootRef = useRef(null);
   const controlsRef = useRef(null);
   const cameraRef = useRef(null);
   const preloadedTexturesRef = useRef({});
+  const materialTexturesRef = useRef({});
 
   const preloadTextures = () => {
     const textureLoader = new THREE.TextureLoader();
 
+    // Preload old colorway textures (keep for backwards compatibility)
     Object.keys(colorwayTextures).forEach(colorway => {
       preloadedTexturesRef.current[colorway] = {};
       const textures = colorwayTextures[colorway];
 
-      // Preload diffuse texture
       preloadedTexturesRef.current[colorway].diffuse = textureLoader.load(textures.diffuse);
-      // Preload normal texture
       preloadedTexturesRef.current[colorway].normal = textureLoader.load(textures.normal);
-      // Preload metallic/roughness texture
       preloadedTexturesRef.current[colorway].metallicRoughness = textureLoader.load(textures.metallicRoughness);
     });
   };
 
-  const applyCustomColors = () => {
+  const preloadMaterialTextures = () => {
+    const textureLoader = new THREE.TextureLoader();
+
+    // Preload ALL possible material combinations, not just current selections
+    const allMaterials = ['cotton', 'teddy', 'wool'];
+    const allParts = ['main', 'lining'];
+
+    allMaterials.forEach(materialId => {
+      allParts.forEach(partId => {
+        const texturePaths = getTexturePaths(materialId, partId);
+        if (texturePaths) {
+          const key = `${materialId}_${partId}`;
+          materialTexturesRef.current[key] = {
+            diffuse: textureLoader.load(
+              texturePaths.diffuse,
+              (texture) => {
+                texture.wrapS = THREE.RepeatWrapping;
+                texture.wrapT = THREE.RepeatWrapping;
+                texture.flipY = false;
+              },
+              undefined,
+              (error) => console.error(`Failed to load diffuse texture: ${texturePaths.diffuse}`, error)
+            ),
+            normal: textureLoader.load(
+              texturePaths.normal,
+              (texture) => {
+                texture.wrapS = THREE.RepeatWrapping;
+                texture.wrapT = THREE.RepeatWrapping;
+                texture.flipY = false;
+              },
+              undefined,
+              (error) => console.error(`Failed to load normal texture: ${texturePaths.normal}`, error)
+            ),
+            metallicRoughness: textureLoader.load(
+              texturePaths.metallicRoughness,
+              (texture) => {
+                texture.wrapS = THREE.RepeatWrapping;
+                texture.wrapT = THREE.RepeatWrapping;
+                texture.flipY = false;
+              },
+              undefined,
+              (error) => console.error(`Failed to load metallic-roughness texture: ${texturePaths.metallicRoughness}`, error)
+            )
+          };
+        }
+      });
+    });
+  };
+
+  const applyMaterialsAndColors = () => {
     if (!rootRef.current) return;
 
-    // Find and update material textures
+    // Apply materials and colors to the model
     rootRef.current.traverse((child) => {
       if (child.isMesh && child.material && child.name) {
-        // Debug: log all mesh names to understand the model structure
-        console.log('Mesh name:', child.name);
-
-        // Determine which part this mesh belongs to
+        // Determine which part this mesh belongs to based on mesh name patterns
         let partType = null;
+        let materialPartId = null;
 
-        // More specific matching based on actual mesh names we found
-        if (child.name.includes('Zipper')) {
-          partType = 'zipperDetails';
-        } else if (child.name.includes('Body') || child.name.includes('Sleeves') ||
-            child.name.includes('Hood_outside') || child.name.includes('Cuff')) {
+        // Map mesh names to material parts (based on the new material model structure)
+        if (child.name.includes('1001')) {
+          materialPartId = 'main'; // Main body material
           partType = 'body';
-        } else if (child.name.includes('Hood_inside') || child.name.includes('Lining') ||
-                   child.name.includes('Trim') || child.name.includes('Stopper') ||
-                   child.name.includes('Piping') || child.name.includes('Strap') ||
-                   child.name.includes('String') || child.name.includes('string') ||
-                   child.name.includes('Cord') || child.name.includes('cord')) {
+        } else if (child.name.includes('999')) {
+          materialPartId = 'lining'; // Lining material
           partType = 'hoodInterior';
+        } else if (child.name.includes('981')) {
+          // 981 parts are zipper/details - keep as metallic, no material texture
+          materialPartId = null;
+          partType = 'zipperDetails';
         }
 
-        if (partType) {
+        // Legacy fallback for older mesh naming
+        if (!materialPartId && !partType) {
+          if (child.name.includes('Zipper')) {
+            partType = 'zipperDetails';
+            materialPartId = null; // Keep zippers metallic
+          } else if (child.name.includes('Body') || child.name.includes('Sleeves') ||
+              child.name.includes('Hood_outside') || child.name.includes('Cuff')) {
+            partType = 'body';
+            materialPartId = 'main';
+          } else if (child.name.includes('Hood_inside') || child.name.includes('Lining') ||
+                     child.name.includes('Trim') || child.name.includes('Stopper') ||
+                     child.name.includes('Piping') || child.name.includes('Strap') ||
+                     child.name.includes('String') || child.name.includes('string') ||
+                     child.name.includes('Cord') || child.name.includes('cord')) {
+            partType = 'hoodInterior';
+            materialPartId = 'lining';
+          } else {
+            // Default fallback - apply main material to any unrecognized mesh
+            partType = 'body';
+            materialPartId = 'main';
+          }
+        }
+
+        // Handle material application based on part type
+        if (partType === 'zipperDetails') {
+          // Zipper parts: always metallic, no material textures
+          if (!child.material.userData.isCloned) {
+            child.material = child.material.clone();
+            child.material.userData.isCloned = true;
+            child.material.userData.originalColor = child.material.color.clone();
+          }
+
+          // Remove any textures and apply metallic properties
+          child.material.map = null;
+          child.material.normalMap = null;
+          child.material.metalnessMap = null;
+          child.material.roughnessMap = null;
+
+          // Apply custom color if specified, otherwise use default metallic color
+          if (customColors[partType]) {
+            const color = new THREE.Color(customColors[partType]);
+            child.material.color = color;
+          } else {
+            // Default metallic zipper color
+            child.material.color.setHex(0x8B8B8B); // Silver/grey metallic
+          }
+
+          child.material.metalness = 0.9;
+          child.material.roughness = 0.2;
+          child.material.needsUpdate = true;
+
+        } else if (partType && materialPartId) {
           // Clone the material to avoid affecting other meshes
           if (!child.material.userData.isCloned) {
             child.material = child.material.clone();
@@ -70,70 +167,65 @@ export const useHoodieModel = (mountRef, customColors) => {
             }
           }
 
-          if (customColors[partType]) {
-
-          // Apply the custom color
-          const color = new THREE.Color(customColors[partType]);
-
-          // Handle different material types appropriately
-          if (partType === 'zipperDetails') {
-            // Zipper/metallic components should always use pure color (no texture)
+          // Clear any existing textures to prevent stacking
+          if (child.material.map) {
             child.material.map = null;
-            child.material.color = color;
-            child.material.metalness = 0.9; // High metallic value for metal look
-            child.material.roughness = 0.2; // Smooth but not too reflective to avoid shader issues
+          }
+          if (child.material.normalMap) {
+            child.material.normalMap = null;
+          }
+          if (child.material.metalnessMap) {
+            child.material.metalnessMap = null;
+          }
+          if (child.material.roughnessMap) {
+            child.material.roughnessMap = null;
+          }
 
-            // Ensure proper material type for metallic rendering
-            if (child.material.isMeshStandardMaterial) {
-              // Keep it simple to avoid shader compilation issues
-              child.material.emissive = new THREE.Color(0x111111); // Slight emissive for metallic glow
-            }
-          } else if (partType === 'body') {
-            // For main fabric, always use pure colors to avoid texture color interference
-            child.material.map = null;
-            child.material.color = color;
-            child.material.metalness = 0.1;
+          // Get the selected material for this part
+          const selectedMaterial = materialSelections[materialPartId];
+          const materialKey = `${selectedMaterial}_${materialPartId}`;
+          const materialTextures = materialTexturesRef.current[materialKey];
+
+          // Apply material textures if available
+          if (materialTextures && materialTextures.diffuse) {
+            // Apply textures
+            child.material.map = materialTextures.diffuse;
+            child.material.normalMap = materialTextures.normal;
+            child.material.metalnessMap = materialTextures.metallicRoughness;
+            child.material.roughnessMap = materialTextures.metallicRoughness;
+
+            // Set material properties for fabric
+            child.material.metalness = 0.0;
             child.material.roughness = 0.8;
-          } else if (partType === 'hoodInterior') {
-            // Handle hood interior parts including stoppers and strings
-            // Always remove texture and apply pure color for consistent results
-            child.material.map = null;
-            child.material.color = color;
 
-            // Different material properties based on specific part type
-            if (child.name.includes('Stopper') || child.name.includes('String') ||
-                child.name.includes('string') || child.name.includes('Cord') ||
-                child.name.includes('cord')) {
-              // Stoppers and strings: slightly more plastic/rubber-like
-              child.material.metalness = 0.2;
-              child.material.roughness = 0.6;
+            // Ensure material color is white so textures show properly (unless custom color applied)
+            if (!customColors[partType]) {
+              child.material.color.setHex(0xffffff);
             } else {
-              // Other fabric parts (lining, trim, etc.)
+              // Apply custom color tint over texture
+              const color = new THREE.Color(customColors[partType]);
+              child.material.color = color;
+            }
+          } else {
+            // Fallback to default material properties when no textures are available
+            if (partType === 'zipperDetails') {
+              child.material.metalness = 0.9;
+              child.material.roughness = 0.2;
+            } else {
               child.material.metalness = 0.1;
               child.material.roughness = 0.8;
             }
-          } else {
-            // For materials without specific handling, just set the color
-            child.material.map = null;
-            child.material.color = color;
-            child.material.metalness = 0.1;
-            child.material.roughness = 0.8;
+
+            // Restore original color or apply custom color
+            if (customColors[partType]) {
+              const color = new THREE.Color(customColors[partType]);
+              child.material.color = color;
+            } else if (child.material.userData.originalColor) {
+              child.material.color = child.material.userData.originalColor;
+            }
           }
 
           child.material.needsUpdate = true;
-          } else {
-            // Restore original material properties when no custom color is set
-            if (child.material.userData.originalMap) {
-              child.material.map = child.material.userData.originalMap;
-            }
-            child.material.color = child.material.userData.originalColor;
-            child.material.metalness = child.material.userData.originalMetalness;
-            child.material.roughness = child.material.userData.originalRoughness;
-            if (child.material.userData.originalEmissive) {
-              child.material.emissive = child.material.userData.originalEmissive;
-            }
-            child.material.needsUpdate = true;
-          }
         }
       }
     });
@@ -202,6 +294,7 @@ export const useHoodieModel = (mountRef, customColors) => {
 
     // Preload all textures first
     preloadTextures();
+    preloadMaterialTextures();
 
     const scene = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera(75, 774 / 700, 0.1, 1000);
@@ -277,9 +370,23 @@ export const useHoodieModel = (mountRef, customColors) => {
     animate();
 
     // Load the hoodie model
-    const gltfLoader = new GLTFLoader();
+    // Create a custom loading manager that handles missing textures
+    const loadingManager = new THREE.LoadingManager();
+
+    // Set a custom loader for PNG files that skips missing textures
+    loadingManager.setURLModifier((url) => {
+      // Skip textures that don't exist
+      if (url.includes('_999.png') || url.includes('_981.png')) {
+        // Return a data URL for a 1x1 transparent pixel
+        return 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg==';
+      }
+      return url;
+    });
+
+    const gltfLoader = new GLTFLoader(loadingManager);
+
     gltfLoader.load(
-      "/nua_hoodie_2_colourway 2/nua_hoodie_2_colourway.gltf",
+      "/Nua-hoodie-material/Nua hoodie material.gltf",
       (gltf) => {
         rootRef.current = gltf.scene;
 
@@ -302,8 +409,8 @@ export const useHoodieModel = (mountRef, customColors) => {
         camera.position.set(0, 0, size * 0.7);
         camera.lookAt(0, 0, 0);
 
-        // Apply initial custom colors
-        applyCustomColors();
+        // Apply initial materials and colors
+        applyMaterialsAndColors();
       },
       (progress) => {
         console.log(
@@ -328,12 +435,17 @@ export const useHoodieModel = (mountRef, customColors) => {
     };
   }, []);
 
-  // Handle custom color changes
+  // Handle custom color and material changes
   useEffect(() => {
     if (rootRef.current) {
-      applyCustomColors();
+      applyMaterialsAndColors();
     }
-  }, [customColors]);
+  }, [customColors, materialSelections]);
+
+  // Preload material textures when selections change
+  useEffect(() => {
+    preloadMaterialTextures();
+  }, [materialSelections]);
 
   return {
     setCameraView,

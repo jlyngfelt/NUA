@@ -6,9 +6,11 @@ import { Hoodie } from "../components/Hoodie";
 import { ConfiguratorCard } from "../components/ComfiguratorCard/ConfiguratorCard";
 import { Description } from "../components/Description/Description";
 import { NavigationBanner } from "../components/NavigationBanner/NavigationBanner";
+import { defaultMaterialSelections, calculateMaterialCost } from "../components/Hoodie/config/materialConfig";
 
 export default function ProductSelection() {
     const [customColors, setCustomColors] = useState({});
+    const [materialSelections, setMaterialSelections] = useState(defaultMaterialSelections);
 
     const handleColorChange = (part, color) => {
       setCustomColors(prev => ({
@@ -17,9 +19,19 @@ export default function ProductSelection() {
       }));
     };
 
+    const handleMaterialChange = (partId, materialId) => {
+      setMaterialSelections(prev => ({
+        ...prev,
+        [partId]: materialId
+      }));
+    };
+
     const handleReset = () => {
       setCustomColors({});
+      setMaterialSelections(defaultMaterialSelections);
     };
+
+    const materialCost = calculateMaterialCost(materialSelections);
 
 
   return (
@@ -28,8 +40,18 @@ export default function ProductSelection() {
 
       <NavigationBanner/>
         <main >
-      <Hoodie customColors={customColors} onColorChange={handleColorChange}/>
-      <ConfiguratorCard customColors={customColors} onColorChange={handleColorChange} onReset={handleReset} />
+      <Hoodie
+        customColors={customColors}
+        onColorChange={handleColorChange}
+        materialSelections={materialSelections}
+      />
+      <ConfiguratorCard
+        customColors={customColors}
+        onColorChange={handleColorChange}
+        materialSelections={materialSelections}
+        onMaterialChange={handleMaterialChange}
+        onReset={handleReset}
+      />
         </main>
         <Description/>
       <Footer />
