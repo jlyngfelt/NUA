@@ -52,17 +52,25 @@ export const useHoodieModel = (mountRef, customColors) => {
           partType = 'hoodInterior';
         }
 
-        if (partType && customColors[partType]) {
+        if (partType) {
           // Clone the material to avoid affecting other meshes
           if (!child.material.userData.isCloned) {
             child.material = child.material.clone();
             child.material.userData.isCloned = true;
 
-            // Store original texture if it exists
+            // Store original properties
             if (child.material.map) {
               child.material.userData.originalMap = child.material.map.clone();
             }
+            child.material.userData.originalColor = child.material.color.clone();
+            child.material.userData.originalMetalness = child.material.metalness;
+            child.material.userData.originalRoughness = child.material.roughness;
+            if (child.material.emissive) {
+              child.material.userData.originalEmissive = child.material.emissive.clone();
+            }
           }
+
+          if (customColors[partType]) {
 
           // Apply the custom color
           const color = new THREE.Color(customColors[partType]);
@@ -113,6 +121,19 @@ export const useHoodieModel = (mountRef, customColors) => {
           }
 
           child.material.needsUpdate = true;
+          } else {
+            // Restore original material properties when no custom color is set
+            if (child.material.userData.originalMap) {
+              child.material.map = child.material.userData.originalMap;
+            }
+            child.material.color = child.material.userData.originalColor;
+            child.material.metalness = child.material.userData.originalMetalness;
+            child.material.roughness = child.material.userData.originalRoughness;
+            if (child.material.userData.originalEmissive) {
+              child.material.emissive = child.material.userData.originalEmissive;
+            }
+            child.material.needsUpdate = true;
+          }
         }
       }
     });
