@@ -115,28 +115,34 @@ export const useHoodieModel = (mountRef, customColors, materialSelections = defa
           partType = 'zipperDetails';
         }
 
-        // Legacy fallback for older mesh naming
+        // Legacy fallback for older mesh naming - be more specific about hood interior
         if (!materialPartId && !partType) {
           if (child.name.includes('Zipper')) {
             partType = 'zipperDetails';
             materialPartId = null; // Keep zippers metallic
+          } else if (child.name.includes('Hood_inside')) {
+            // Only Hood_inside should use lining material
+            partType = 'hoodInterior';
+            materialPartId = 'lining';
           } else if (child.name.includes('Body') || child.name.includes('Sleeves') ||
               child.name.includes('Hood_outside') || child.name.includes('Cuff')) {
             partType = 'body';
             materialPartId = 'main';
-          } else if (child.name.includes('Hood_inside') || child.name.includes('Lining') ||
-                     child.name.includes('Trim') || child.name.includes('Stopper') ||
-                     child.name.includes('Piping') || child.name.includes('Strap') ||
-                     child.name.includes('String') || child.name.includes('string') ||
-                     child.name.includes('Cord') || child.name.includes('cord')) {
+          } else if (child.name.includes('Lining') || child.name.includes('Trim') ||
+                     child.name.includes('Stopper') || child.name.includes('Piping') ||
+                     child.name.includes('Strap') || child.name.includes('String') ||
+                     child.name.includes('string') || child.name.includes('Cord') ||
+                     child.name.includes('cord') || child.name.includes('Binding')) {
+            // These parts should follow hood interior color but not use material texture
             partType = 'hoodInterior';
-            materialPartId = 'lining';
+            materialPartId = null; // Don't apply material texture to these small parts
           } else {
             // Default fallback - apply main material to any unrecognized mesh
             partType = 'body';
             materialPartId = 'main';
           }
         }
+
 
         // Handle material application based on part type
         if (partType === 'zipperDetails') {
@@ -205,7 +211,13 @@ export const useHoodieModel = (mountRef, customColors, materialSelections = defa
           // Get the selected material for this part
           const selectedMaterial = materialSelections[materialPartId];
           const materialKey = `${selectedMaterial}_${materialPartId}`;
-          const materialTextures = materialTexturesRef.current[materialKey];
+          let materialTextures = materialTexturesRef.current[materialKey];
+
+          // Fallback for lining material if 999 textures don't exist
+          if (!materialTextures && materialPartId === 'lining') {
+            const fallbackKey = `${selectedMaterial}_main`;
+            materialTextures = materialTexturesRef.current[fallbackKey];
+          }
 
           // Apply material textures if available
           if (materialTextures && materialTextures.diffuse) {
@@ -435,10 +447,6 @@ export const useHoodieModel = (mountRef, customColors, materialSelections = defa
             child.castShadow = true;
             child.receiveShadow = true;
 
-            // Log geometry info to check subdivision levels
-            if (child.geometry) {
-              console.log(`Mesh: ${child.name}, Vertices: ${child.geometry.attributes.position.count}`);
-            }
           }
         });
 
