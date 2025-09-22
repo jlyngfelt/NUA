@@ -26,8 +26,9 @@ export const useHoodieModel = (mountRef, customColors, materialSelections = defa
     });
   };
 
-  const preloadMaterialTextures = () => {
+  const preloadMaterialTextures = (renderer) => {
     const textureLoader = new THREE.TextureLoader();
+    const maxAnisotropy = renderer ? renderer.capabilities.getMaxAnisotropy() : 16;
 
     // Preload ALL possible material combinations, not just current selections
     const allMaterials = ['cotton', 'teddy', 'wool'];
@@ -42,9 +43,14 @@ export const useHoodieModel = (mountRef, customColors, materialSelections = defa
             diffuse: textureLoader.load(
               texturePaths.diffuse,
               (texture) => {
-                texture.wrapS = THREE.RepeatWrapping;
-                texture.wrapT = THREE.RepeatWrapping;
+                texture.wrapS = THREE.ClampToEdgeWrapping;
+                texture.wrapT = THREE.ClampToEdgeWrapping;
                 texture.flipY = false;
+                // Enhanced texture settings for better visibility
+                texture.repeat.set(1, 1); // Use original UV mapping
+                texture.magFilter = THREE.LinearFilter;
+                texture.minFilter = THREE.LinearMipmapLinearFilter;
+                texture.anisotropy = maxAnisotropy; // Maximum anisotropic filtering for crisp textures
               },
               undefined,
               (error) => console.error(`Failed to load diffuse texture: ${texturePaths.diffuse}`, error)
@@ -52,9 +58,14 @@ export const useHoodieModel = (mountRef, customColors, materialSelections = defa
             normal: textureLoader.load(
               texturePaths.normal,
               (texture) => {
-                texture.wrapS = THREE.RepeatWrapping;
-                texture.wrapT = THREE.RepeatWrapping;
+                texture.wrapS = THREE.ClampToEdgeWrapping;
+                texture.wrapT = THREE.ClampToEdgeWrapping;
                 texture.flipY = false;
+                // Enhanced texture settings for better visibility
+                texture.repeat.set(1, 1); // Use original UV mapping to prevent distortion
+                texture.magFilter = THREE.LinearFilter;
+                texture.minFilter = THREE.LinearMipmapLinearFilter;
+                texture.anisotropy = maxAnisotropy;
               },
               undefined,
               (error) => console.error(`Failed to load normal texture: ${texturePaths.normal}`, error)
@@ -62,9 +73,14 @@ export const useHoodieModel = (mountRef, customColors, materialSelections = defa
             metallicRoughness: textureLoader.load(
               texturePaths.metallicRoughness,
               (texture) => {
-                texture.wrapS = THREE.RepeatWrapping;
-                texture.wrapT = THREE.RepeatWrapping;
+                texture.wrapS = THREE.ClampToEdgeWrapping;
+                texture.wrapT = THREE.ClampToEdgeWrapping;
                 texture.flipY = false;
+                // Enhanced texture settings for better visibility
+                texture.repeat.set(1, 1); // Use original UV mapping to prevent distortion
+                texture.magFilter = THREE.LinearFilter;
+                texture.minFilter = THREE.LinearMipmapLinearFilter;
+                texture.anisotropy = maxAnisotropy;
               },
               undefined,
               (error) => console.error(`Failed to load metallic-roughness texture: ${texturePaths.metallicRoughness}`, error)
@@ -81,6 +97,7 @@ export const useHoodieModel = (mountRef, customColors, materialSelections = defa
     // Apply materials and colors to the model
     rootRef.current.traverse((child) => {
       if (child.isMesh && child.material && child.name) {
+
         // Determine which part this mesh belongs to based on mesh name patterns
         let partType = null;
         let materialPartId = null;
@@ -141,12 +158,16 @@ export const useHoodieModel = (mountRef, customColors, materialSelections = defa
             const color = new THREE.Color(customColors[partType]);
             child.material.color = color;
           } else {
-            // Default metallic zipper color
-            child.material.color.setHex(0x8B8B8B); // Silver/grey metallic
+            // Default metallic zipper color - darker silver for better visibility
+            child.material.color.setHex(0x404040); // Darker metallic silver
           }
 
           child.material.metalness = 0.9;
           child.material.roughness = 0.2;
+          child.material.transparent = false;
+          child.material.opacity = 1.0;
+          child.material.visible = true;
+          child.visible = true;
           child.material.needsUpdate = true;
 
         } else if (partType && materialPartId) {
@@ -191,20 +212,26 @@ export const useHoodieModel = (mountRef, customColors, materialSelections = defa
             // Apply textures
             child.material.map = materialTextures.diffuse;
             child.material.normalMap = materialTextures.normal;
-            child.material.metalnessMap = materialTextures.metallicRoughness;
+            // Don't use metallic maps for fabric materials to prevent dark spots
+            child.material.metalnessMap = null;
             child.material.roughnessMap = materialTextures.metallicRoughness;
 
-            // Set material properties for fabric
-            child.material.metalness = 0.0;
-            child.material.roughness = 0.8;
+            // Enhanced material properties for better texture visibility
+            child.material.metalness = 0.0; // No metalness for fabric materials
+            child.material.roughness = 0.8; // Appropriate roughness for fabric
+            child.material.normalScale = new THREE.Vector2(1.5, 1.5); // Moderate normal map intensity
 
-            // Ensure material color is white so textures show properly (unless custom color applied)
+            // Enhanced color handling for better texture visibility
             if (!customColors[partType]) {
+              // Use white to show textures clearly
               child.material.color.setHex(0xffffff);
             } else {
-              // Apply custom color tint over texture
-              const color = new THREE.Color(customColors[partType]);
-              child.material.color = color;
+              // Apply custom color more subtly to preserve texture detail
+              const customColor = new THREE.Color(customColors[partType]);
+              // Use a lighter tint to maintain texture visibility
+              const tintStrength = 0.5; // Lighter tint preserves more texture detail
+              const white = new THREE.Color(0xffffff);
+              child.material.color = white.lerp(customColor, tintStrength);
             }
           } else {
             // Fallback to default material properties when no textures are available
@@ -294,7 +321,6 @@ export const useHoodieModel = (mountRef, customColors, materialSelections = defa
 
     // Preload all textures first
     preloadTextures();
-    preloadMaterialTextures();
 
     const scene = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera(75, 774 / 700, 0.1, 1000);
@@ -310,12 +336,20 @@ export const useHoodieModel = (mountRef, customColors, materialSelections = defa
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     renderer.setClearColor(0xc4c4c4, 1);
 
-    // Enhanced quality settings
+    // Enhanced quality settings for better texture rendering
     renderer.shadowMap.enabled = true;
     renderer.shadowMap.type = THREE.PCFSoftShadowMap;
     renderer.outputColorSpace = THREE.SRGBColorSpace;
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
-    renderer.toneMappingExposure = 1.2;
+    renderer.toneMappingExposure = 1.2; // Balanced exposure for good texture visibility
+
+    // Enable maximum anisotropic filtering for crisp textures
+    const maxAnisotropy = renderer.capabilities.getMaxAnisotropy();
+    console.log('Max anisotropy supported:', maxAnisotropy);
+
+    // Preload material textures with renderer anisotropy support
+    preloadMaterialTextures(renderer);
+
     mountRef.current.appendChild(renderer.domElement);
 
     // Studio-quality lighting setup for optimal hoodie presentation
@@ -444,7 +478,14 @@ export const useHoodieModel = (mountRef, customColors, materialSelections = defa
 
   // Preload material textures when selections change
   useEffect(() => {
-    preloadMaterialTextures();
+    // Only preload if we have access to renderer capabilities
+    if (mountRef.current && mountRef.current.querySelector('canvas')) {
+      const canvas = mountRef.current.querySelector('canvas');
+      const gl = canvas.getContext('webgl2') || canvas.getContext('webgl');
+      if (gl) {
+        preloadMaterialTextures({ capabilities: { getMaxAnisotropy: () => gl.getParameter(gl.MAX_TEXTURE_MAX_ANISOTROPY_EXT) || 16 } });
+      }
+    }
   }, [materialSelections]);
 
   return {
