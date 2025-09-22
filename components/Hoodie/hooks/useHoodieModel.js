@@ -128,11 +128,15 @@ export const useHoodieModel = (mountRef, customColors, materialSelections = defa
               child.name.includes('Hood_outside') || child.name.includes('Cuff')) {
             partType = 'body';
             materialPartId = 'main';
+          } else if (child.name.includes('Piping') || child.name.includes('Strap') ||
+                     child.name.includes('String') || child.name.includes('string') ||
+                     child.name.includes('Cord') || child.name.includes('cord') ||
+                     child.name.includes('Binding')) {
+            // These parts should follow zipper details color and be metallic
+            partType = 'zipperDetails';
+            materialPartId = null; // Don't apply material texture to these metallic parts
           } else if (child.name.includes('Lining') || child.name.includes('Trim') ||
-                     child.name.includes('Stopper') || child.name.includes('Piping') ||
-                     child.name.includes('Strap') || child.name.includes('String') ||
-                     child.name.includes('string') || child.name.includes('Cord') ||
-                     child.name.includes('cord') || child.name.includes('Binding')) {
+                     child.name.includes('Stopper')) {
             // These parts should follow hood interior color but not use material texture
             partType = 'hoodInterior';
             materialPartId = null; // Don't apply material texture to these small parts
