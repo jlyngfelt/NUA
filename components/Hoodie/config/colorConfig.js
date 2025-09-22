@@ -25,10 +25,10 @@ export const partMapping = {
     "Cuff_outside", "Cuff_inside", "Hood_outside"
   ],
   hoodInterior: [
-    "Hood_inside", "Lining_fabric", "Trim", "Stopper", "Piping", "Strap"
+    "Hood_inside", "Lining_fabric", "Trim", "Stopper"
   ],
   zipperDetails: [
-    "Zipper"
+    "Zipper", "Piping_27584630", "Piping_27606017", "Piping_32967410", "Piping_33094821", "Straps_1", "Straps_2"
   ]
 };
 
