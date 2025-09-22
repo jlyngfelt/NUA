@@ -1,13 +1,15 @@
-import Image from "next/image";
 import styles from "./ConfiguratorCard.module.css";
 import {useState} from 'react';
 import { FitAndSize } from "../FitAndSize/FitAndSize";
 import { Material } from "../Material/Material";
 import { Colour } from "../Colour/Colour";
-import { Description } from '../Description/Description';
+import { calculateMaterialCost } from "../Hoodie/config/materialConfig";
 
-export const ConfiguratorCard = ({ customColors, onColorChange, onReset }) => {
+export const ConfiguratorCard = ({ customColors, onColorChange, materialSelections, onMaterialChange, onReset }) => {
   const [activeTab, setActiveTab] = useState(0);
+  const materialCost = calculateMaterialCost(materialSelections);
+  const basePrice = 450;
+  const totalPrice = basePrice + materialCost;
 
   function handleOnClick() {
     setActiveTab(activeTab+1)
@@ -18,7 +20,7 @@ export const ConfiguratorCard = ({ customColors, onColorChange, onReset }) => {
     <div className={styles.configuratorCard}>
       <div className={styles.mainInfo}>
         <h1>Nua hoodie</h1>
-        <h1>450 kr</h1>
+        <h1>{totalPrice} kr</h1>
       </div>
       <h2>Estimated delivery time: 23 Sep 2025</h2>
 
@@ -52,7 +54,7 @@ export const ConfiguratorCard = ({ customColors, onColorChange, onReset }) => {
 {
   {
     0: <FitAndSize handleOnClick={handleOnClick}/>,
-    1: <Material handleOnClick={handleOnClick}/>,
+    1: <Material handleOnClick={handleOnClick} materialSelections={materialSelections} onMaterialChange={onMaterialChange}/>,
     2: <Colour customColors={customColors} onColorChange={onColorChange} handleOnClick={handleOnClick}/>
   }[activeTab]
 }

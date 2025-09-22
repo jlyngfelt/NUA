@@ -1,27 +1,56 @@
 import Image from "next/image";
 import styles from "./Material.module.css";
-import {useState} from 'react';
 import { ContinueButton } from "../button/continueButton/ContinueButton";
+import { materialOptions, partDisplayNames, defaultMaterialSelections } from "../Hoodie/config/materialConfig";
 
-export const Material = ({handleOnClick}) => {
-    const [activeTab, setActiveTab] = useState(0);
+export const Material = ({ handleOnClick, materialSelections = defaultMaterialSelections, onMaterialChange }) => {
 
+  const handleMaterialSelect = (partId, materialId) => {
+    if (onMaterialChange) {
+      onMaterialChange(partId, materialId);
+    }
+  };
+
+  const renderMaterialOptions = (partId) => {
     return (
-<div>
-<div className={styles.materialContainer}>
-    <h3>Main material:</h3>
-    
-</div>
-<div className={styles.materialContainer}>
-    <h3>Lining material:</h3>
+      <div className={styles.materialOptions}>
+        {Object.entries(materialOptions).map(([materialId, material]) => (
+          <div
+            key={materialId}
+            className={`${styles.materialOption} ${
+              materialSelections[partId] === materialId ? styles.selected : ''
+            }`}
+            onClick={() => handleMaterialSelect(partId, materialId)}
+          >
+            <div className={styles.materialPreview}>
+              <Image
+                src={material.previewImage}
+                alt={material.name}
+                width={120}
+                height={120}
+                className={styles.materialImage}
+              />
+            </div>
+            <div className={styles.materialInfo}>
+              <span className={styles.materialName}>{material.name}</span>
+              <span className={styles.materialPrice}>{material.displayPrice}</span>
+            </div>
+          </div>
+        ))}
+      </div>
+    );
+  };
 
-</div>
-<div className={styles.materialContainer}>
-    <h3>Zip & details material:</h3>
+  return (
+    <div className={styles.materialContainer}>
+      {Object.entries(partDisplayNames).map(([partId, partName]) => (
+        <div key={partId} className={styles.materialSection}>
+          <h3 className={styles.sectionTitle}>{partName}:</h3>
+          {renderMaterialOptions(partId)}
+        </div>
+      ))}
 
-</div>
-
-<ContinueButton onClick={handleOnClick}>Continue</ContinueButton>
-</div>
-    )
-}
+      <ContinueButton onClick={handleOnClick}>Continue</ContinueButton>
+    </div>
+  );
+};
