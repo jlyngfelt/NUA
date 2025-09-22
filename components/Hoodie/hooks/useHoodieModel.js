@@ -1,115 +1,314 @@
-import { useEffect, useRef } from 'react';
-import * as THREE from 'three';
-import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
-import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
-import { colorwayTextures } from '../config/colorConfig';
+import { useEffect, useRef } from "react";
+import * as THREE from "three";
+import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
+import { OrbitControls } from "three/addons/controls/OrbitControls.js";
+import {
+  getTexturePaths,
+  defaultMaterialSelections,
+} from "../config/materialConfig";
+import { partMapping } from "../config/colorConfig";
 
-export const useHoodieModel = (mountRef, customColors) => {
+const getMeshPartType = (meshName) => {
+  // Check each part category to see if this mesh belongs to it
+  for (const [partType, meshNames] of Object.entries(partMapping)) {
+    if (meshNames.includes(meshName)) {
+      return {
+        partType,
+        materialPartId:
+          partType === "zipperDetails"
+            ? null
+            : partType === "hoodInterior"
+            ? "lining"
+            : "main",
+      };
+    }
+  }
+
+  // Fallback: if mesh name not found in mapping, try pattern matching
+  if (meshName.includes("Hood_inside")) {
+    return { partType: "hoodInterior", materialPartId: "lining" };
+  } else if (
+    meshName.includes("Zipper") ||
+    meshName.includes("Stopper") ||
+    meshName.includes("Trim") ||
+    meshName.includes("Piping") ||
+    meshName.includes("Strap") ||
+    meshName.includes("String") ||
+    meshName.includes("string") ||
+    meshName.includes("Cord") ||
+    meshName.includes("cord") ||
+    meshName.includes("Topstitch") ||
+    meshName.includes("Binding")
+  ) {
+    return { partType: "zipperDetails", materialPartId: null };
+  } else {
+    // Default to body/main material
+    return { partType: "body", materialPartId: "main" };
+  }
+};
+
+export const useHoodieModel = (
+  mountRef,
+  customColors,
+  materialSelections = defaultMaterialSelections
+) => {
   const rootRef = useRef(null);
   const controlsRef = useRef(null);
   const cameraRef = useRef(null);
   const preloadedTexturesRef = useRef({});
+  const materialTexturesRef = useRef({});
 
-  const preloadTextures = () => {
+  const preloadMaterialTextures = (renderer) => {
     const textureLoader = new THREE.TextureLoader();
+    const maxAnisotropy = renderer
+      ? renderer.capabilities.getMaxAnisotropy()
+      : 16;
 
-    Object.keys(colorwayTextures).forEach(colorway => {
-      preloadedTexturesRef.current[colorway] = {};
-      const textures = colorwayTextures[colorway];
+    // Preload ALL possible material combinations, not just current selections
+    const allMaterials = ["cotton", "teddy", "nylon"];
+    const allParts = ["main", "lining"];
 
-      // Preload diffuse texture
-      preloadedTexturesRef.current[colorway].diffuse = textureLoader.load(textures.diffuse);
-      // Preload normal texture
-      preloadedTexturesRef.current[colorway].normal = textureLoader.load(textures.normal);
-      // Preload metallic/roughness texture
-      preloadedTexturesRef.current[colorway].metallicRoughness = textureLoader.load(textures.metallicRoughness);
+    allMaterials.forEach((materialId) => {
+      allParts.forEach((partId) => {
+        const texturePaths = getTexturePaths(materialId, partId);
+        if (texturePaths) {
+          const key = `${materialId}_${partId}`;
+          materialTexturesRef.current[key] = {
+            diffuse: textureLoader.load(
+              texturePaths.diffuse,
+              (texture) => {
+                texture.wrapS = THREE.ClampToEdgeWrapping;
+                texture.wrapT = THREE.ClampToEdgeWrapping;
+                texture.flipY = false;
+                // Enhanced texture settings for better visibility
+                texture.repeat.set(1, 1); // Use original UV mapping
+                texture.magFilter = THREE.LinearFilter;
+                texture.minFilter = THREE.LinearMipmapLinearFilter;
+                texture.anisotropy = maxAnisotropy; // Maximum anisotropic filtering for crisp textures
+              },
+              undefined,
+              (error) =>
+                console.error(
+                  `Failed to load diffuse texture: ${texturePaths.diffuse}`,
+                  error
+                )
+            ),
+            normal: textureLoader.load(
+              texturePaths.normal,
+              (texture) => {
+                texture.wrapS = THREE.ClampToEdgeWrapping;
+                texture.wrapT = THREE.ClampToEdgeWrapping;
+                texture.flipY = false;
+                // Enhanced texture settings for better visibility
+                texture.repeat.set(1, 1); // Use original UV mapping to prevent distortion
+                texture.magFilter = THREE.LinearFilter;
+                texture.minFilter = THREE.LinearMipmapLinearFilter;
+                texture.anisotropy = maxAnisotropy;
+              },
+              undefined,
+              (error) =>
+                console.error(
+                  `Failed to load normal texture: ${texturePaths.normal}`,
+                  error
+                )
+            ),
+            metallicRoughness: textureLoader.load(
+              texturePaths.metallicRoughness,
+              (texture) => {
+                texture.wrapS = THREE.ClampToEdgeWrapping;
+                texture.wrapT = THREE.ClampToEdgeWrapping;
+                texture.flipY = false;
+                // Enhanced texture settings for better visibility
+                texture.repeat.set(1, 1); // Use original UV mapping to prevent distortion
+                texture.magFilter = THREE.LinearFilter;
+                texture.minFilter = THREE.LinearMipmapLinearFilter;
+                texture.anisotropy = maxAnisotropy;
+              },
+              undefined,
+              (error) =>
+                console.error(
+                  `Failed to load metallic-roughness texture: ${texturePaths.metallicRoughness}`,
+                  error
+                )
+            ),
+          };
+        }
+      });
     });
   };
 
-  const applyCustomColors = () => {
+  const applyMaterialsAndColors = () => {
     if (!rootRef.current) return;
 
-    // Find and update material textures
+    // Apply materials and colors to the model
     rootRef.current.traverse((child) => {
       if (child.isMesh && child.material && child.name) {
-        // Debug: log all mesh names to understand the model structure
-        console.log('Mesh name:', child.name);
+        console.log("Mesh name:", child.name);
 
-        // Determine which part this mesh belongs to
-        let partType = null;
+        // Get part type and material ID using the mapping
+        const { partType, materialPartId } = getMeshPartType(child.name);
 
-        // More specific matching based on actual mesh names we found
-        if (child.name.includes('Zipper')) {
-          partType = 'zipperDetails';
-        } else if (child.name.includes('Body') || child.name.includes('Sleeves') ||
-            child.name.includes('Hood_outside') || child.name.includes('Cuff')) {
-          partType = 'body';
-        } else if (child.name.includes('Hood_inside') || child.name.includes('Lining') ||
-                   child.name.includes('Trim') || child.name.includes('Stopper') ||
-                   child.name.includes('Piping') || child.name.includes('Strap') ||
-                   child.name.includes('String') || child.name.includes('string') ||
-                   child.name.includes('Cord') || child.name.includes('cord')) {
-          partType = 'hoodInterior';
-        }
+        console.log(
+          `${child.name} -> partType: ${partType}, materialPartId: ${materialPartId}`
+        );
 
-        if (partType && customColors[partType]) {
+        // Handle material application based on part type
+        if (partType === "zipperDetails") {
+          // Check if this is a string/strap (should be fabric, not metallic)
+          const isString =
+            child.name.includes("Strap") ||
+            child.name.includes("String") ||
+            child.name.includes("string") ||
+            child.name.includes("Cord") ||
+            child.name.includes("cord");
+
+          // Check if this is piping (should be plastic, not metallic)
+          const isPiping =
+            child.name.includes("Piping") || child.name.includes("Binding");
+
+          if (!child.material.userData.isCloned) {
+            child.material = child.material.clone();
+            child.material.userData.isCloned = true;
+            child.material.userData.originalColor =
+              child.material.color.clone();
+          }
+
+          // Remove any textures and apply properties based on material type
+          child.material.map = null;
+          child.material.normalMap = null;
+          child.material.metalnessMap = null;
+          child.material.roughnessMap = null;
+
+          // Apply custom color if specified, otherwise use default color
+          if (customColors[partType]) {
+            const color = new THREE.Color(customColors[partType]);
+            child.material.color = color;
+          } else {
+            // Default color based on type
+            if (isString) {
+              child.material.color.setHex(0x2c2c2c); // Dark grey for strings
+            } else if (isPiping) {
+              child.material.color.setHex(0x3a3a3a); // Slightly lighter grey for piping
+            } else {
+              child.material.color.setHex(0x404040); // Darker metallic silver for hardware
+            }
+          }
+
+          // Apply different material properties for strings vs piping vs hardware
+          if (isString) {
+            // Fabric properties for strings/straps
+            child.material.metalness = 0.0; // No metalness - fabric
+            child.material.roughness = 0.9; // High roughness - fabric/cord texture
+          } else if (isPiping) {
+            // Plastic properties for piping/binding
+            child.material.metalness = 0.1; // Very low metalness - plastic
+            child.material.roughness = 0.6; // Medium roughness - plastic texture
+          } else {
+            // Metallic properties for zippers, stoppers, etc.
+            child.material.metalness = 0.9;
+            child.material.roughness = 0.2;
+          }
+
+          child.material.transparent = false;
+          child.material.opacity = 1.0;
+          child.material.visible = true;
+          child.visible = true;
+          child.material.needsUpdate = true;
+        } else if (partType && materialPartId) {
           // Clone the material to avoid affecting other meshes
           if (!child.material.userData.isCloned) {
             child.material = child.material.clone();
             child.material.userData.isCloned = true;
 
-            // Store original texture if it exists
+            // Store original properties
             if (child.material.map) {
               child.material.userData.originalMap = child.material.map.clone();
             }
+            child.material.userData.originalColor =
+              child.material.color.clone();
+            child.material.userData.originalMetalness =
+              child.material.metalness;
+            child.material.userData.originalRoughness =
+              child.material.roughness;
+            if (child.material.emissive) {
+              child.material.userData.originalEmissive =
+                child.material.emissive.clone();
+            }
           }
 
-          // Apply the custom color
-          const color = new THREE.Color(customColors[partType]);
-
-          // Handle different material types appropriately
-          if (partType === 'zipperDetails') {
-            // Zipper/metallic components should always use pure color (no texture)
+          // Clear any existing textures to prevent stacking
+          if (child.material.map) {
             child.material.map = null;
-            child.material.color = color;
-            child.material.metalness = 0.9; // High metallic value for metal look
-            child.material.roughness = 0.2; // Smooth but not too reflective to avoid shader issues
+          }
+          if (child.material.normalMap) {
+            child.material.normalMap = null;
+          }
+          if (child.material.metalnessMap) {
+            child.material.metalnessMap = null;
+          }
+          if (child.material.roughnessMap) {
+            child.material.roughnessMap = null;
+          }
 
-            // Ensure proper material type for metallic rendering
-            if (child.material.isMeshStandardMaterial) {
-              // Keep it simple to avoid shader compilation issues
-              child.material.emissive = new THREE.Color(0x111111); // Slight emissive for metallic glow
-            }
-          } else if (partType === 'body') {
-            // For main fabric, always use pure colors to avoid texture color interference
-            child.material.map = null;
-            child.material.color = color;
-            child.material.metalness = 0.1;
-            child.material.roughness = 0.8;
-          } else if (partType === 'hoodInterior') {
-            // Handle hood interior parts including stoppers and strings
-            // Always remove texture and apply pure color for consistent results
-            child.material.map = null;
-            child.material.color = color;
+          // Get the selected material for this part
+          const selectedMaterial = materialSelections[materialPartId];
+          const materialKey = `${selectedMaterial}_${materialPartId}`;
+          let materialTextures = materialTexturesRef.current[materialKey];
 
-            // Different material properties based on specific part type
-            if (child.name.includes('Stopper') || child.name.includes('String') ||
-                child.name.includes('string') || child.name.includes('Cord') ||
-                child.name.includes('cord')) {
-              // Stoppers and strings: slightly more plastic/rubber-like
-              child.material.metalness = 0.2;
-              child.material.roughness = 0.6;
+          // Fallback for lining material if 999 textures don't exist
+          if (!materialTextures && materialPartId === "lining") {
+            const fallbackKey = `${selectedMaterial}_main`;
+            materialTextures = materialTexturesRef.current[fallbackKey];
+          }
+
+          // Apply material textures if available
+          if (materialTextures && materialTextures.diffuse) {
+            // Apply textures
+            child.material.map = materialTextures.diffuse;
+            child.material.normalMap = materialTextures.normal;
+            // Don't use metallic maps for fabric materials to prevent dark spots
+            child.material.metalnessMap = null;
+            child.material.roughnessMap = materialTextures.metallicRoughness;
+
+            // Add displacement mapping for physical texture depth
+            child.material.displacementMap = materialTextures.normal; // Use normal map as displacement
+            child.material.displacementScale = 0.05; // Increased displacement for more visible bump effect
+            child.material.displacementBias = -0.025; // Center the displacement
+
+            // Enhanced material properties for better texture visibility
+            child.material.metalness = 0.0; // No metalness for fabric materials
+            child.material.roughness = 0.8; // Appropriate roughness for fabric
+            child.material.normalScale = new THREE.Vector2(2.5, 2.5); // Increased normal map intensity for more depth
+
+            // Enhanced color handling for better texture visibility
+            if (!customColors[partType]) {
+              // Use white to show textures clearly
+              child.material.color.setHex(0xffffff);
             } else {
-              // Other fabric parts (lining, trim, etc.)
+              // Apply custom color with stronger tint while preserving texture detail
+              const customColor = new THREE.Color(customColors[partType]);
+              // Increased tint strength for more visible color changes
+              const tintStrength = 0.99; // Stronger tint for better color visibility
+              const white = new THREE.Color(0xffffff);
+              child.material.color = white.lerp(customColor, tintStrength);
+            }
+          } else {
+            // Fallback to default material properties when no textures are available
+            if (partType === "zipperDetails") {
+              child.material.metalness = 0.9;
+              child.material.roughness = 0.2;
+            } else {
               child.material.metalness = 0.1;
               child.material.roughness = 0.8;
             }
-          } else {
-            // For materials without specific handling, just set the color
-            child.material.map = null;
-            child.material.color = color;
-            child.material.metalness = 0.1;
-            child.material.roughness = 0.8;
+
+            // Restore original color or apply custom color
+            if (customColors[partType]) {
+              const color = new THREE.Color(customColors[partType]);
+              child.material.color = color;
+            } else if (child.material.userData.originalColor) {
+              child.material.color = child.material.userData.originalColor;
+            }
           }
 
           child.material.needsUpdate = true;
@@ -155,7 +354,7 @@ export const useHoodieModel = (mountRef, customColors) => {
     const controls = controlsRef.current;
 
     // Use smaller increments for smoother zooming
-    const zoomFactor = direction === 'in' ? 0.9 : 1.1;
+    const zoomFactor = direction === "in" ? 0.9 : 1.1;
 
     const currentDistance = camera.position.length();
     const newDistance = currentDistance * zoomFactor;
@@ -179,29 +378,33 @@ export const useHoodieModel = (mountRef, customColors) => {
   useEffect(() => {
     if (!mountRef.current) return;
 
-    // Preload all textures first
-    preloadTextures();
-
     const scene = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera(75, 774 / 700, 0.1, 1000);
     cameraRef.current = camera;
     const renderer = new THREE.WebGLRenderer({
       antialias: true,
       alpha: false,
-      powerPreference: "high-performance"
+      powerPreference: "high-performance",
     });
-
 
     renderer.setSize(774, 700);
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     renderer.setClearColor(0xc4c4c4, 1);
 
-    // Enhanced quality settings
+    // Enhanced quality settings for better texture rendering
     renderer.shadowMap.enabled = true;
     renderer.shadowMap.type = THREE.PCFSoftShadowMap;
     renderer.outputColorSpace = THREE.SRGBColorSpace;
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
-    renderer.toneMappingExposure = 1.2;
+    renderer.toneMappingExposure = 1.2; // Balanced exposure for good texture visibility
+
+    // Enable maximum anisotropic filtering for crisp textures
+    const maxAnisotropy = renderer.capabilities.getMaxAnisotropy();
+    console.log("Max anisotropy supported:", maxAnisotropy);
+
+    // Preload material textures with renderer anisotropy support
+    preloadMaterialTextures(renderer);
+
     mountRef.current.appendChild(renderer.domElement);
 
     // Studio-quality lighting setup for optimal hoodie presentation
@@ -234,7 +437,13 @@ export const useHoodieModel = (mountRef, customColors) => {
     scene.add(backLight);
 
     // Side accent light for texture definition
-    const sideLight = new THREE.SpotLight(0xffffff, 0.6, 30, Math.PI * 0.15, 0.3);
+    const sideLight = new THREE.SpotLight(
+      0xffffff,
+      0.6,
+      30,
+      Math.PI * 0.15,
+      0.3
+    );
     sideLight.position.set(12, 8, 2);
     scene.add(sideLight);
 
@@ -256,13 +465,27 @@ export const useHoodieModel = (mountRef, customColors) => {
     animate();
 
     // Load the hoodie model
-    const gltfLoader = new GLTFLoader();
+    // Create a custom loading manager that handles missing textures
+    const loadingManager = new THREE.LoadingManager();
+
+    // Set a custom loader for PNG files that skips missing textures
+    loadingManager.setURLModifier((url) => {
+      // Skip textures that don't exist
+      if (url.includes("_999.png") || url.includes("_981.png")) {
+        // Return a data URL for a 1x1 transparent pixel
+        return "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg==";
+      }
+      return url;
+    });
+
+    const gltfLoader = new GLTFLoader(loadingManager);
+
     gltfLoader.load(
-      "/nua_hoodie_2_colourway 2/nua_hoodie_2_colourway.gltf",
+      "/hoodie-materials/cotton.gltf",
       (gltf) => {
         rootRef.current = gltf.scene;
 
-        // Enable shadows on the model
+        // Enable shadows on the model and check geometry detail
         gltf.scene.traverse((child) => {
           if (child.isMesh) {
             child.castShadow = true;
@@ -281,8 +504,8 @@ export const useHoodieModel = (mountRef, customColors) => {
         camera.position.set(0, 0, size * 0.7);
         camera.lookAt(0, 0, 0);
 
-        // Apply initial custom colors
-        applyCustomColors();
+        // Apply initial materials and colors
+        applyMaterialsAndColors();
       },
       (progress) => {
         console.log(
@@ -307,15 +530,32 @@ export const useHoodieModel = (mountRef, customColors) => {
     };
   }, []);
 
-  // Handle custom color changes
+  // Handle custom color and material changes
   useEffect(() => {
     if (rootRef.current) {
-      applyCustomColors();
+      applyMaterialsAndColors();
     }
-  }, [customColors]);
+  }, [customColors, materialSelections]);
+
+  // Preload material textures when selections change
+  useEffect(() => {
+    // Only preload if we have access to renderer capabilities
+    if (mountRef.current && mountRef.current.querySelector("canvas")) {
+      const canvas = mountRef.current.querySelector("canvas");
+      const gl = canvas.getContext("webgl2") || canvas.getContext("webgl");
+      if (gl) {
+        preloadMaterialTextures({
+          capabilities: {
+            getMaxAnisotropy: () =>
+              gl.getParameter(gl.MAX_TEXTURE_MAX_ANISOTROPY_EXT) || 16,
+          },
+        });
+      }
+    }
+  }, [materialSelections]);
 
   return {
     setCameraView,
-    handleZoom
+    handleZoom,
   };
 };
