@@ -216,20 +216,25 @@ export const useHoodieModel = (mountRef, customColors, materialSelections = defa
             child.material.metalnessMap = null;
             child.material.roughnessMap = materialTextures.metallicRoughness;
 
+            // Add displacement mapping for physical texture depth
+            child.material.displacementMap = materialTextures.normal; // Use normal map as displacement
+            child.material.displacementScale = 0.05; // Increased displacement for more visible bump effect
+            child.material.displacementBias = -0.025; // Center the displacement
+
             // Enhanced material properties for better texture visibility
             child.material.metalness = 0.0; // No metalness for fabric materials
             child.material.roughness = 0.8; // Appropriate roughness for fabric
-            child.material.normalScale = new THREE.Vector2(1.5, 1.5); // Moderate normal map intensity
+            child.material.normalScale = new THREE.Vector2(2.5, 2.5); // Increased normal map intensity for more depth
 
             // Enhanced color handling for better texture visibility
             if (!customColors[partType]) {
               // Use white to show textures clearly
               child.material.color.setHex(0xffffff);
             } else {
-              // Apply custom color more subtly to preserve texture detail
+              // Apply custom color with stronger tint while preserving texture detail
               const customColor = new THREE.Color(customColors[partType]);
-              // Use a lighter tint to maintain texture visibility
-              const tintStrength = 0.5; // Lighter tint preserves more texture detail
+              // Increased tint strength for more visible color changes
+              const tintStrength = 0.99; // Stronger tint for better color visibility
               const white = new THREE.Color(0xffffff);
               child.material.color = white.lerp(customColor, tintStrength);
             }
@@ -424,11 +429,16 @@ export const useHoodieModel = (mountRef, customColors, materialSelections = defa
       (gltf) => {
         rootRef.current = gltf.scene;
 
-        // Enable shadows on the model
+        // Enable shadows on the model and check geometry detail
         gltf.scene.traverse((child) => {
           if (child.isMesh) {
             child.castShadow = true;
             child.receiveShadow = true;
+
+            // Log geometry info to check subdivision levels
+            if (child.geometry) {
+              console.log(`Mesh: ${child.name}, Vertices: ${child.geometry.attributes.position.count}`);
+            }
           }
         });
 
