@@ -31,7 +31,7 @@ export const useHoodieModel = (mountRef, customColors, materialSelections = defa
     const maxAnisotropy = renderer ? renderer.capabilities.getMaxAnisotropy() : 16;
 
     // Preload ALL possible material combinations, not just current selections
-    const allMaterials = ['cotton', 'teddy', 'wool'];
+    const allMaterials = ['cotton', 'teddy', 'nylon'];
     const allParts = ['main', 'lining'];
 
     allMaterials.forEach(materialId => {
@@ -135,11 +135,14 @@ export const useHoodieModel = (mountRef, customColors, materialSelections = defa
             // These parts should follow zipper details color and be metallic
             partType = 'zipperDetails';
             materialPartId = null; // Don't apply material texture to these metallic parts
-          } else if (child.name.includes('Lining') || child.name.includes('Trim') ||
-                     child.name.includes('Stopper')) {
+          } else if (child.name.includes('Lining') || child.name.includes('Trim')) {
             // These parts should follow hood interior color but not use material texture
             partType = 'hoodInterior';
             materialPartId = null; // Don't apply material texture to these small parts
+          } else if (child.name.includes('Stopper')) {
+            // Stopper should follow zipper details color (hardware component)
+            partType = 'zipperDetails';
+            materialPartId = null; // Don't apply material texture to hardware parts
           } else {
             // Default fallback - apply main material to any unrecognized mesh
             partType = 'body';
@@ -441,7 +444,7 @@ export const useHoodieModel = (mountRef, customColors, materialSelections = defa
     const gltfLoader = new GLTFLoader(loadingManager);
 
     gltfLoader.load(
-      "/Nua-hoodie-material/Nua hoodie material.gltf",
+      "/hoodie-materials/cotton.gltf",
       (gltf) => {
         rootRef.current = gltf.scene;
 

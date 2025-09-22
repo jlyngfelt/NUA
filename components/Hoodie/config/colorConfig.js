@@ -25,23 +25,9 @@ export const partMapping = {
     "Cuff_outside", "Cuff_inside", "Hood_outside"
   ],
   hoodInterior: [
-    "Hood_inside", "Lining_fabric", "Trim", "Stopper"
+    "Hood_inside", "Lining_fabric", "Trim"
   ],
   zipperDetails: [
-    "Zipper", "Piping_27584630", "Piping_27606017", "Piping_32967410", "Piping_33094821", "Straps_1", "Straps_2"
+    "Zipper", "Piping_27584630", "Piping_27606017", "Piping_32967410", "Piping_33094821", "Straps_1", "Straps_2", "Stopper"
   ]
-};
-
-// Texture paths for preloading
-export const colorwayTextures = {
-  A: {
-    diffuse: "/nua_hoodie_2_colourway 2/nua_hoodie_2_colourway_Colorway A_diffuse_1001.png",
-    normal: "/nua_hoodie_2_colourway 2/nua_hoodie_2_colourway_Colorway A_normal_1001.png",
-    metallicRoughness: "/nua_hoodie_2_colourway 2/nua_hoodie_2_colourway_Colorway A_metallicroughness_1001.png"
-  },
-  B: {
-    diffuse: "/nua_hoodie_2_colourway 2/nua_hoodie_2_colourway_Colorway B_diffuse_1001.png",
-    normal: "/nua_hoodie_2_colourway 2/nua_hoodie_2_colourway_Colorway B_normal_1001.png",
-    metallicRoughness: "/nua_hoodie_2_colourway 2/nua_hoodie_2_colourway_Colorway B_metallicroughness_1001.png"
-  }
 };

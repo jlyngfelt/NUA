@@ -5,24 +5,24 @@ export const materialOptions = {
     price: 0,
     displayPrice: "+0kr",
     id: "cotton",
-    texturePrefix: "Fabric_A_cotton",
-    previewImage: "/Nua-hoodie-material/Nua%20hoodie%20material_Fabric_A_cotton_diffuse_1001.png"
+    texturePrefix: "cotton",
+    previewImage: "/hoodie-materials/cotton_diffuse_1001.png"
   },
   teddy: {
     name: "Teddy",
     price: 20,
     displayPrice: "+20kr",
     id: "teddy",
-    texturePrefix: "Fabric_B_teddy",
-    previewImage: "/Nua-hoodie-material/Nua%20hoodie%20material_Fabric_B_teddy_diffuse_1001.png"
+    texturePrefix: "teddy",
+    previewImage: "/hoodie-materials/teddy_diffuse_1001.png"
   },
-  wool: {
-    name: "Wool",
+  nylon: {
+    name: "Nylon",
     price: 50,
     displayPrice: "+50kr",
-    id: "wool",
-    texturePrefix: "Fabric_C_Wool",
-    previewImage: "/Nua-hoodie-material/Nua%20hoodie%20material_Fabric_C_Wool_diffuse_1001.png"
+    id: "nylon",
+    texturePrefix: "nylon",
+    previewImage: "/hoodie-materials/nylon_diffuse_1001.png"
   }
 };
 
@@ -47,7 +47,7 @@ export const getTexturePaths = (materialId, partId) => {
     return null;
   }
 
-  const basePath = "/Nua-hoodie-material/Nua%20hoodie%20material_";
+  const basePath = "/hoodie-materials/";
 
   return {
     diffuse: `${basePath}${material.texturePrefix}_diffuse_${partSuffix}.png`,
