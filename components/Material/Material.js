@@ -32,8 +32,7 @@ export const Material = ({ handleOnClick, materialSelections = defaultMaterialSe
               />
             </div>
             <div className={styles.materialInfo}>
-              <span className={styles.materialName}>{material.name}</span>
-              <span className={styles.materialPrice}>{material.displayPrice}</span>
+              <span className={styles.materialName}>{material.name} {material.displayPrice}</span>
             </div>
           </div>
         ))}

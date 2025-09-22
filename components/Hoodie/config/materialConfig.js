@@ -6,7 +6,7 @@ export const materialOptions = {
     displayPrice: "+0kr",
     id: "cotton",
     texturePrefix: "cotton",
-    previewImage: "/hoodie-materials/cotton_diffuse_1001.png"
+    previewImage: "/images/Cotton_Material.jpg"
   },
   teddy: {
     name: "Teddy",
@@ -14,7 +14,7 @@ export const materialOptions = {
     displayPrice: "+20kr",
     id: "teddy",
     texturePrefix: "teddy",
-    previewImage: "/hoodie-materials/teddy_diffuse_1001.png"
+    previewImage: "/images/Teddy_Material.jpg"
   },
   nylon: {
     name: "Nylon",
@@ -22,7 +22,7 @@ export const materialOptions = {
     displayPrice: "+50kr",
     id: "nylon",
     texturePrefix: "nylon",
-    previewImage: "/hoodie-materials/nylon_diffuse_1001.png"
+    previewImage: "/images/Nylon_Material.jpg"
   }
 };
 
