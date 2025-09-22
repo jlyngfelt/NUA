@@ -5,11 +5,10 @@ import { Menu } from "../components/Menu/Menu";
 import { Hoodie } from "../components/Hoodie";
 import { ConfiguratorCard } from "../components/ComfiguratorCard/ConfiguratorCard";
 import { Description } from "../components/Description/Description";
-import { defaultColors } from "../components/Hoodie/config/colorConfig";
 import { NavigationBanner } from "../components/NavigationBanner/NavigationBanner";
 
 export default function ProductSelection() {
-    const [customColors, setCustomColors] = useState(defaultColors);
+    const [customColors, setCustomColors] = useState({});
 
     const handleColorChange = (part, color) => {
       setCustomColors(prev => ({
@@ -19,8 +18,9 @@ export default function ProductSelection() {
     };
 
     const handleReset = () => {
-      setCustomColors(defaultColors);
+      setCustomColors({});
     };
+
 
   return (
     <div>

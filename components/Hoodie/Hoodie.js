@@ -3,7 +3,6 @@ import styles from "./Hoodie.module.css";
 import { ColorCustomization } from './components/ColorCustomization';
 import { CameraControls } from './components/CameraControls';
 import { useHoodieModel } from './hooks/useHoodieModel';
-import { defaultColors } from './config/colorConfig';
 
 export const Hoodie = ({ customColors, onColorChange }) => {
   const mountRef = useRef(null);
