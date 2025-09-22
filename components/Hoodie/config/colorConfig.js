@@ -12,7 +12,7 @@ export const colorOptions = {
     { name: "Cream", color: "#E8DCC6" }
   ],
   zipperDetails: [
-    { name: "Bronze", color: "#CD7F32" },
+    { name: "Green", color: "#7A8471" },
     { name: "Dark Grey", color: "#4A4A4A" },
     { name: "Light Grey", color: "#8B8B8B" }
   ]
