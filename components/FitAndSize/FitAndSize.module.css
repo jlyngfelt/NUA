@@ -16,7 +16,18 @@
 .sizes {
   display: flex;
   justify-content: space-between;
-  margin-bottom: 1.75rem;
+  
+}
+.sizeContainer p{
+align-items: end;
+}
+
+.sizeGuide {
+  display:flex;
+  flex-direction: column;
+    align-items: flex-end;
+    font-weight: 400;
+    text-decoration: underline;
 }
 
 .sizeContainer button {
@@ -39,11 +50,12 @@
   cursor: pointer;
   width: 4.3125rem;
   padding: 0.5rem 1.625rem;
+  border-radius: 0.125rem;
 }
 
 .tabMenuButton.active {
-  text-decoration: underline;
-  font-weight: 600;
+  background-color: #2E3228;
+  color: white;
 }
 
 .imageContainer {

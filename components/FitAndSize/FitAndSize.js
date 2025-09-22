@@ -71,6 +71,9 @@ export const FitAndSize = ({ handleOnClick }) => {
             3xl
           </button>
         </div>
+        <div className={styles.sizeGuide}>
+        <p>Size guide</p>
+        </div>
       </div>
 
         <h3>Fit:</h3>
