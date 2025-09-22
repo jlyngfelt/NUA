@@ -2,7 +2,6 @@ import { useEffect, useRef } from 'react';
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
-import { colorwayTextures } from '../config/colorConfig';
 import { getTexturePaths, defaultMaterialSelections } from '../config/materialConfig';
 
 export const useHoodieModel = (mountRef, customColors, materialSelections = defaultMaterialSelections) => {
@@ -12,19 +11,6 @@ export const useHoodieModel = (mountRef, customColors, materialSelections = defa
   const preloadedTexturesRef = useRef({});
   const materialTexturesRef = useRef({});
 
-  const preloadTextures = () => {
-    const textureLoader = new THREE.TextureLoader();
-
-    // Preload old colorway textures (keep for backwards compatibility)
-    Object.keys(colorwayTextures).forEach(colorway => {
-      preloadedTexturesRef.current[colorway] = {};
-      const textures = colorwayTextures[colorway];
-
-      preloadedTexturesRef.current[colorway].diffuse = textureLoader.load(textures.diffuse);
-      preloadedTexturesRef.current[colorway].normal = textureLoader.load(textures.normal);
-      preloadedTexturesRef.current[colorway].metallicRoughness = textureLoader.load(textures.metallicRoughness);
-    });
-  };
 
   const preloadMaterialTextures = (renderer) => {
     const textureLoader = new THREE.TextureLoader();
@@ -342,9 +328,6 @@ export const useHoodieModel = (mountRef, customColors, materialSelections = defa
   // Initialize 3D scene
   useEffect(() => {
     if (!mountRef.current) return;
-
-    // Preload all textures first
-    preloadTextures();
 
     const scene = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera(75, 774 / 700, 0.1, 1000);
