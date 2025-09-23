@@ -37,13 +37,11 @@ export const materialPartMapping = {
 export const getTexturePaths = (materialId, partId) => {
   const material = materialOptions[materialId];
   if (!material) {
-    console.warn(`Material not found: ${materialId}`);
     return null;
   }
 
   const partSuffix = materialPartMapping[partId];
   if (!partSuffix) {
-    console.warn(`Part mapping not found for: ${partId}`);
     return null;
   }
 

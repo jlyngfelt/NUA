@@ -85,13 +85,7 @@ export const useHoodieModel = (
                 texture.magFilter = THREE.LinearFilter;
                 texture.minFilter = THREE.LinearMipmapLinearFilter;
                 texture.anisotropy = maxAnisotropy; // Maximum anisotropic filtering for crisp textures
-              },
-              undefined,
-              (error) =>
-                console.error(
-                  `Failed to load diffuse texture: ${texturePaths.diffuse}`,
-                  error
-                )
+              }
             ),
             normal: textureLoader.load(
               texturePaths.normal,
@@ -104,13 +98,7 @@ export const useHoodieModel = (
                 texture.magFilter = THREE.LinearFilter;
                 texture.minFilter = THREE.LinearMipmapLinearFilter;
                 texture.anisotropy = maxAnisotropy;
-              },
-              undefined,
-              (error) =>
-                console.error(
-                  `Failed to load normal texture: ${texturePaths.normal}`,
-                  error
-                )
+              }
             ),
             metallicRoughness: textureLoader.load(
               texturePaths.metallicRoughness,
@@ -123,13 +111,7 @@ export const useHoodieModel = (
                 texture.magFilter = THREE.LinearFilter;
                 texture.minFilter = THREE.LinearMipmapLinearFilter;
                 texture.anisotropy = maxAnisotropy;
-              },
-              undefined,
-              (error) =>
-                console.error(
-                  `Failed to load metallic-roughness texture: ${texturePaths.metallicRoughness}`,
-                  error
-                )
+              }
             ),
           };
         }
@@ -143,14 +125,8 @@ export const useHoodieModel = (
     // Apply materials and colors to the model
     rootRef.current.traverse((child) => {
       if (child.isMesh && child.material && child.name) {
-        console.log("Mesh name:", child.name);
-
         // Get part type and material ID using the mapping
         const { partType, materialPartId } = getMeshPartType(child.name);
-
-        console.log(
-          `${child.name} -> partType: ${partType}, materialPartId: ${materialPartId}`
-        );
 
         // Handle material application based on part type
         if (partType === "zipperDetails") {
@@ -400,7 +376,6 @@ export const useHoodieModel = (
 
     // Enable maximum anisotropic filtering for crisp textures
     const maxAnisotropy = renderer.capabilities.getMaxAnisotropy();
-    console.log("Max anisotropy supported:", maxAnisotropy);
 
     // Preload material textures with renderer anisotropy support
     preloadMaterialTextures(renderer);
@@ -506,15 +481,6 @@ export const useHoodieModel = (
 
         // Apply initial materials and colors
         applyMaterialsAndColors();
-      },
-      (progress) => {
-        console.log(
-          "Loading progress:",
-          (progress.loaded / progress.total) * 100 + "%"
-        );
-      },
-      (error) => {
-        console.error("Error loading model:", error);
       }
     );
 
