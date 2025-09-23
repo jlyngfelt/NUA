@@ -1,7 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
 import styles from "./Landingpage.module.css";
-import { useState } from "react";
 
 export const Landingpage = () => {
   return (

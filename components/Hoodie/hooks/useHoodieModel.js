@@ -376,8 +376,6 @@ export const useHoodieModel = (
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
     renderer.toneMappingExposure = 1.2; // Balanced exposure for good texture visibility
 
-    // Enable maximum anisotropic filtering for crisp textures
-    const maxAnisotropy = renderer.capabilities.getMaxAnisotropy();
 
     // Preload material textures with renderer anisotropy support
     preloadMaterialTextures(renderer);
