@@ -184,7 +184,7 @@ export const useHoodieModel = (
             child.material.roughness = 0.6; // Medium roughness - plastic texture
           } else {
             // Metallic properties for zippers, stoppers, etc.
-            child.material.metalness = 0.9;
+            child.material.metalness = 0.7;
             child.material.roughness = 0.2;
           }
 
