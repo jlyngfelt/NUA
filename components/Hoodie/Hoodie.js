@@ -1,6 +1,5 @@
-import { useRef, useState } from "react";
+import { useRef } from "react";
 import styles from "./Hoodie.module.css";
-import { ColorCustomization } from './components/ColorCustomization';
 import { CameraControls } from './components/CameraControls';
 import { useHoodieModel } from './hooks/useHoodieModel';
 
@@ -15,11 +14,6 @@ export const Hoodie = ({ customColors, onColorChange, materialSelections }) => {
   return (
     <div className={styles.container}>
       <div ref={mountRef} />
-
-      {/* <ColorCustomization
-        customColors={customColors}
-        onColorChange={handleColorChange}
-      /> */}
 
       <CameraControls
         onViewChange={setCameraView}
