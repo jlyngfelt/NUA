@@ -58,6 +58,8 @@ export const useHoodieModel = (
   const preloadedTexturesRef = useRef({});
   const materialTexturesRef = useRef({});
   const initialDistanceRef = useRef(null);
+  const rendererRef = useRef(null);
+  const sceneRef = useRef(null);
 
   const preloadMaterialTextures = (renderer) => {
     const textureLoader = new THREE.TextureLoader();
@@ -357,6 +359,7 @@ export const useHoodieModel = (
     if (!mountRef.current) return;
 
     const scene = new THREE.Scene();
+    sceneRef.current = scene;
     const camera = new THREE.PerspectiveCamera(75, 774 / 700, 0.1, 1000);
     cameraRef.current = camera;
     const renderer = new THREE.WebGLRenderer({
@@ -364,6 +367,7 @@ export const useHoodieModel = (
       alpha: false,
       powerPreference: "high-performance",
     });
+    rendererRef.current = renderer;
 
     renderer.setSize(774, 700);
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
@@ -434,10 +438,20 @@ export const useHoodieModel = (
     controlsRef.current = controls;
 
     // Update controls in animation loop
+    let animationId;
+    let needsRender = true;
+
+    controls.addEventListener('change', () => {
+      needsRender = true;
+    });
+
     function animate() {
-      controls.update();
-      renderer.render(scene, camera);
-      requestAnimationFrame(animate);
+      animationId = requestAnimationFrame(animate);
+
+      if (controls.update() || needsRender) {
+        renderer.render(scene, camera);
+        needsRender = false;
+      }
     }
     animate();
 
@@ -489,6 +503,29 @@ export const useHoodieModel = (
     );
 
     return () => {
+      cancelAnimationFrame(animationId);
+
+      if (rootRef.current) {
+        rootRef.current.traverse((child) => {
+          if (child.isMesh) {
+            if (child.geometry) child.geometry.dispose();
+            if (child.material) {
+              if (Array.isArray(child.material)) {
+                child.material.forEach(mat => mat.dispose());
+              } else {
+                child.material.dispose();
+              }
+            }
+          }
+        });
+      }
+
+      Object.values(materialTexturesRef.current).forEach(textures => {
+        if (textures.diffuse) textures.diffuse.dispose();
+        if (textures.normal) textures.normal.dispose();
+        if (textures.metallicRoughness) textures.metallicRoughness.dispose();
+      });
+
       if (
         mountRef.current &&
         renderer.domElement &&
@@ -504,6 +541,9 @@ export const useHoodieModel = (
   useEffect(() => {
     if (rootRef.current) {
       applyMaterialsAndColors();
+      if (rendererRef.current && sceneRef.current && cameraRef.current) {
+        rendererRef.current.render(sceneRef.current, cameraRef.current);
+      }
     }
   }, [customColors, materialSelections]);
 
