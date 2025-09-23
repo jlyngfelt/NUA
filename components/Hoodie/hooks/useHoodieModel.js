@@ -57,6 +57,7 @@ export const useHoodieModel = (
   const cameraRef = useRef(null);
   const preloadedTexturesRef = useRef({});
   const materialTexturesRef = useRef({});
+  const initialDistanceRef = useRef(null);
 
   const preloadMaterialTextures = (renderer) => {
     const textureLoader = new THREE.TextureLoader();
@@ -298,26 +299,27 @@ export const useHoodieModel = (
 
     const camera = cameraRef.current;
     const controls = controlsRef.current;
-    const distance = camera.position.length();
+    const defaultDistance = initialDistanceRef.current || 10;
 
     let newPosition;
     switch (view) {
       case "front":
-        newPosition = new THREE.Vector3(0, 0, distance);
+        newPosition = new THREE.Vector3(0, 0, defaultDistance);
         break;
       case "3/4-front":
-        newPosition = new THREE.Vector3(distance * 0.7, 0, distance * 0.7);
+        newPosition = new THREE.Vector3(defaultDistance * 0.7, 0, defaultDistance * 0.7);
         break;
       case "back":
-        newPosition = new THREE.Vector3(0, 0, -distance);
+        newPosition = new THREE.Vector3(0, 0, -defaultDistance);
         break;
       case "3/4-back":
-        newPosition = new THREE.Vector3(-distance * 0.7, 0, -distance * 0.7);
+        newPosition = new THREE.Vector3(-defaultDistance * 0.7, 0, -defaultDistance * 0.7);
         break;
       default:
         return;
     }
 
+    controls.target.set(0, 0, 0);
     camera.position.copy(newPosition);
     camera.lookAt(0, 0, 0);
     controls.update();
@@ -336,7 +338,7 @@ export const useHoodieModel = (
     const newDistance = currentDistance * zoomFactor;
 
     // Set reasonable zoom limits based on the initial camera distance
-    const minDistance = 2;
+    const minDistance = 10;
     const maxDistance = 100;
 
     if (newDistance < minDistance || newDistance > maxDistance) {
@@ -427,6 +429,8 @@ export const useHoodieModel = (
     controls.enableDamping = true;
     controls.dampingFactor = 0.05;
     controls.enableZoom = true;
+    controls.minDistance = 40;
+    controls.maxDistance = 100;
     controls.enablePan = false;
     controls.autoRotate = false;
     controlsRef.current = controls;
@@ -476,7 +480,9 @@ export const useHoodieModel = (
         const center = box.getCenter(new THREE.Vector3());
 
         gltf.scene.position.copy(center.multiplyScalar(-1));
-        camera.position.set(0, 0, size * 0.7);
+        const initialDistance = size * 0.7;
+        initialDistanceRef.current = initialDistance;
+        camera.position.set(0, 0, initialDistance);
         camera.lookAt(0, 0, 0);
 
         // Apply initial materials and colors
