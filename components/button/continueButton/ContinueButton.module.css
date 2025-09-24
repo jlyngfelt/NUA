@@ -15,8 +15,6 @@
 
 .button:hover {
   display: flex;
-  
-  padding: 0.875rem 14.625rem;
   justify-content: center;
   align-items: center;
   gap: 0.625rem;
