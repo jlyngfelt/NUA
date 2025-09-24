@@ -5,6 +5,9 @@ body {
     font-family: "Helvetica Neue";
 
 }
+ button {
+    font-family: "Helvetica Neue";
+ }
 
 * {
     box-sizing: border-box;
