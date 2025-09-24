@@ -57,6 +57,9 @@ export const useHoodieModel = (
   const cameraRef = useRef(null);
   const preloadedTexturesRef = useRef({});
   const materialTexturesRef = useRef({});
+  const initialDistanceRef = useRef(null);
+  const rendererRef = useRef(null);
+  const sceneRef = useRef(null);
 
   const preloadMaterialTextures = (renderer) => {
     const textureLoader = new THREE.TextureLoader();
@@ -85,13 +88,7 @@ export const useHoodieModel = (
                 texture.magFilter = THREE.LinearFilter;
                 texture.minFilter = THREE.LinearMipmapLinearFilter;
                 texture.anisotropy = maxAnisotropy; // Maximum anisotropic filtering for crisp textures
-              },
-              undefined,
-              (error) =>
-                console.error(
-                  `Failed to load diffuse texture: ${texturePaths.diffuse}`,
-                  error
-                )
+              }
             ),
             normal: textureLoader.load(
               texturePaths.normal,
@@ -104,13 +101,7 @@ export const useHoodieModel = (
                 texture.magFilter = THREE.LinearFilter;
                 texture.minFilter = THREE.LinearMipmapLinearFilter;
                 texture.anisotropy = maxAnisotropy;
-              },
-              undefined,
-              (error) =>
-                console.error(
-                  `Failed to load normal texture: ${texturePaths.normal}`,
-                  error
-                )
+              }
             ),
             metallicRoughness: textureLoader.load(
               texturePaths.metallicRoughness,
@@ -123,13 +114,7 @@ export const useHoodieModel = (
                 texture.magFilter = THREE.LinearFilter;
                 texture.minFilter = THREE.LinearMipmapLinearFilter;
                 texture.anisotropy = maxAnisotropy;
-              },
-              undefined,
-              (error) =>
-                console.error(
-                  `Failed to load metallic-roughness texture: ${texturePaths.metallicRoughness}`,
-                  error
-                )
+              }
             ),
           };
         }
@@ -143,14 +128,8 @@ export const useHoodieModel = (
     // Apply materials and colors to the model
     rootRef.current.traverse((child) => {
       if (child.isMesh && child.material && child.name) {
-        console.log("Mesh name:", child.name);
-
         // Get part type and material ID using the mapping
         const { partType, materialPartId } = getMeshPartType(child.name);
-
-        console.log(
-          `${child.name} -> partType: ${partType}, materialPartId: ${materialPartId}`
-        );
 
         // Handle material application based on part type
         if (partType === "zipperDetails") {
@@ -205,7 +184,7 @@ export const useHoodieModel = (
             child.material.roughness = 0.6; // Medium roughness - plastic texture
           } else {
             // Metallic properties for zippers, stoppers, etc.
-            child.material.metalness = 0.9;
+            child.material.metalness = 0.7;
             child.material.roughness = 0.2;
           }
 
@@ -322,26 +301,27 @@ export const useHoodieModel = (
 
     const camera = cameraRef.current;
     const controls = controlsRef.current;
-    const distance = camera.position.length();
+    const defaultDistance = initialDistanceRef.current || 10;
 
     let newPosition;
     switch (view) {
       case "front":
-        newPosition = new THREE.Vector3(0, 0, distance);
+        newPosition = new THREE.Vector3(0, 0, defaultDistance);
         break;
       case "3/4-front":
-        newPosition = new THREE.Vector3(distance * 0.7, 0, distance * 0.7);
+        newPosition = new THREE.Vector3(defaultDistance * 0.7, 0, defaultDistance * 0.7);
         break;
       case "back":
-        newPosition = new THREE.Vector3(0, 0, -distance);
+        newPosition = new THREE.Vector3(0, 0, -defaultDistance);
         break;
       case "3/4-back":
-        newPosition = new THREE.Vector3(-distance * 0.7, 0, -distance * 0.7);
+        newPosition = new THREE.Vector3(-defaultDistance * 0.7, 0, -defaultDistance * 0.7);
         break;
       default:
         return;
     }
 
+    controls.target.set(0, 0, 0);
     camera.position.copy(newPosition);
     camera.lookAt(0, 0, 0);
     controls.update();
@@ -360,7 +340,7 @@ export const useHoodieModel = (
     const newDistance = currentDistance * zoomFactor;
 
     // Set reasonable zoom limits based on the initial camera distance
-    const minDistance = 2;
+    const minDistance = 10;
     const maxDistance = 100;
 
     if (newDistance < minDistance || newDistance > maxDistance) {
@@ -379,6 +359,7 @@ export const useHoodieModel = (
     if (!mountRef.current) return;
 
     const scene = new THREE.Scene();
+    sceneRef.current = scene;
     const camera = new THREE.PerspectiveCamera(75, 774 / 700, 0.1, 1000);
     cameraRef.current = camera;
     const renderer = new THREE.WebGLRenderer({
@@ -386,6 +367,7 @@ export const useHoodieModel = (
       alpha: false,
       powerPreference: "high-performance",
     });
+    rendererRef.current = renderer;
 
     renderer.setSize(774, 700);
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
@@ -398,9 +380,6 @@ export const useHoodieModel = (
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
     renderer.toneMappingExposure = 1.2; // Balanced exposure for good texture visibility
 
-    // Enable maximum anisotropic filtering for crisp textures
-    const maxAnisotropy = renderer.capabilities.getMaxAnisotropy();
-    console.log("Max anisotropy supported:", maxAnisotropy);
 
     // Preload material textures with renderer anisotropy support
     preloadMaterialTextures(renderer);
@@ -452,15 +431,27 @@ export const useHoodieModel = (
     controls.enableDamping = true;
     controls.dampingFactor = 0.05;
     controls.enableZoom = true;
+    controls.minDistance = 40;
+    controls.maxDistance = 100;
     controls.enablePan = false;
     controls.autoRotate = false;
     controlsRef.current = controls;
 
     // Update controls in animation loop
+    let animationId;
+    let needsRender = true;
+
+    controls.addEventListener('change', () => {
+      needsRender = true;
+    });
+
     function animate() {
-      controls.update();
-      renderer.render(scene, camera);
-      requestAnimationFrame(animate);
+      animationId = requestAnimationFrame(animate);
+
+      if (controls.update() || needsRender) {
+        renderer.render(scene, camera);
+        needsRender = false;
+      }
     }
     animate();
 
@@ -501,24 +492,40 @@ export const useHoodieModel = (
         const center = box.getCenter(new THREE.Vector3());
 
         gltf.scene.position.copy(center.multiplyScalar(-1));
-        camera.position.set(0, 0, size * 0.7);
+        const initialDistance = size * 0.7;
+        initialDistanceRef.current = initialDistance;
+        camera.position.set(0, 0, initialDistance);
         camera.lookAt(0, 0, 0);
 
         // Apply initial materials and colors
         applyMaterialsAndColors();
-      },
-      (progress) => {
-        console.log(
-          "Loading progress:",
-          (progress.loaded / progress.total) * 100 + "%"
-        );
-      },
-      (error) => {
-        console.error("Error loading model:", error);
       }
     );
 
     return () => {
+      cancelAnimationFrame(animationId);
+
+      if (rootRef.current) {
+        rootRef.current.traverse((child) => {
+          if (child.isMesh) {
+            if (child.geometry) child.geometry.dispose();
+            if (child.material) {
+              if (Array.isArray(child.material)) {
+                child.material.forEach(mat => mat.dispose());
+              } else {
+                child.material.dispose();
+              }
+            }
+          }
+        });
+      }
+
+      Object.values(materialTexturesRef.current).forEach(textures => {
+        if (textures.diffuse) textures.diffuse.dispose();
+        if (textures.normal) textures.normal.dispose();
+        if (textures.metallicRoughness) textures.metallicRoughness.dispose();
+      });
+
       if (
         mountRef.current &&
         renderer.domElement &&
@@ -534,6 +541,9 @@ export const useHoodieModel = (
   useEffect(() => {
     if (rootRef.current) {
       applyMaterialsAndColors();
+      if (rendererRef.current && sceneRef.current && cameraRef.current) {
+        rendererRef.current.render(sceneRef.current, cameraRef.current);
+      }
     }
   }, [customColors, materialSelections]);
 

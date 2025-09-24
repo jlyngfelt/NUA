@@ -1,4 +1,3 @@
-// Material options for hoodie customization
 export const materialOptions = {
   cotton: {
     name: "Cotton",
@@ -29,21 +28,18 @@ export const materialOptions = {
 // Part mappings for material application (matches the naming convention in the new model)
 export const materialPartMapping = {
   main: "1001",      // Main body material
-  lining: "1001"     // Hood interior/lining material - using same textures as main since 999 textures don't exist
-  // Note: details (981) removed - zipper should remain metallic, not fabric
+  lining: "1001"     // Hood interior/lining material
 };
 
 // Generate texture paths for a given material and part
 export const getTexturePaths = (materialId, partId) => {
   const material = materialOptions[materialId];
   if (!material) {
-    console.warn(`Material not found: ${materialId}`);
     return null;
   }
 
   const partSuffix = materialPartMapping[partId];
   if (!partSuffix) {
-    console.warn(`Part mapping not found for: ${partId}`);
     return null;
   }
 
