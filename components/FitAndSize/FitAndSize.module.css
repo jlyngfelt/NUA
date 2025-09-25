@@ -1,6 +1,6 @@
 .fitAndSize {
-  max-height: 525px; 
-  overflow-y: auto;
+  max-height: 445px; 
+  overflow-y: scroll;
   display:block;
   padding: 0 1rem ;
 }

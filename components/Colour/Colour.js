@@ -14,7 +14,7 @@ export const Colour = ({ customColors, onColorChange, handleOnClick }) => {
         onColorChange={onColorChange}
       />
 
-      <ContinueButton onClick={handleOnClick}>Add to cart</ContinueButton>
+      {/* <ContinueButton onClick={handleOnClick}>Add to cart</ContinueButton> */}
     </div>
   );
 };

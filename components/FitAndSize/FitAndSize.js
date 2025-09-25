@@ -107,8 +107,8 @@ export const FitAndSize = ({ handleOnClick }) => {
   </div>
 </div>
 
-      <div className={styles.fitContainer}></div>
-      <ContinueButton onClick={handleOnClick}>Continue</ContinueButton>
+      {/* <div className={styles.fitContainer}></div>
+      <ContinueButton onClick={handleOnClick}>Continue</ContinueButton> */}
     </div>
   );
 };

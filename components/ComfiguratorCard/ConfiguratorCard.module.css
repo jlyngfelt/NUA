@@ -1,8 +1,9 @@
 .configuratorCard {
-  padding: 1.25rem 2.5rem;
+  padding: 1.25rem 2.5rem 0 2.5rem;
   background: white;
-
+height: 700px;
   width: 50vw;
+  
 }
 
 .mainInfo {
@@ -65,6 +66,7 @@
   width: 100%;
   justify-content: space-between;
   align-self: stretch;
+  flex-direction: column;
 }
 
 .configuratorButtons button {
@@ -76,4 +78,10 @@
   border: 1px solid #000;
   padding: 0.875rem 1rem;
   cursor: pointer;
+}
+
+.smallButtons {
+  display: flex;
+  flex-direction: row;
+  gap: 0.5rem;
 }
