@@ -1,8 +1,33 @@
 .fitAndSize {
   max-height: 445px; 
   overflow-y: scroll;
-  display:block;
-  padding: 0 1rem ;
+  display: block;
+  padding: 0 1rem;
+}
+
+/* Custom scrollbar for fitAndSize */
+.fitAndSize::-webkit-scrollbar {
+  width: 2px;
+}
+
+.fitAndSize::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.fitAndSize::-webkit-scrollbar-thumb {
+  background: #505841;
+  border-radius: 1px;
+  width: 2px;
+}
+
+.fitAndSize::-webkit-scrollbar-thumb:hover {
+  background: #505841;
+}
+
+/* Firefox support */
+.fitAndSize {
+  scrollbar-width: thin;
+  scrollbar-color: #505841 transparent;
 }
 
 .fitAndSize h3 {
