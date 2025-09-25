@@ -4,6 +4,7 @@ import { FitAndSize } from "../FitAndSize/FitAndSize";
 import { Material } from "../Material/Material";
 import { Colour } from "../Colour/Colour";
 import { calculateMaterialCost } from "../Hoodie/config/materialConfig";
+import { ContinueButton } from "../button/continueButton/ContinueButton";
 
 export const ConfiguratorCard = ({ customColors, onColorChange, materialSelections, onMaterialChange, onReset }) => {
   const [activeTab, setActiveTab] = useState(0);
@@ -61,9 +62,12 @@ export const ConfiguratorCard = ({ customColors, onColorChange, materialSelectio
 
 
 <div className={styles.configuratorButtons}>
+  <ContinueButton onClick={handleOnClick}>{activeTab === 0 || activeTab === 1 ?  "Continue" : "Add to cart"}</ContinueButton>
+    <div className={styles.smallButtons}>
     <button onClick={onReset}>Reset</button>
     <button>Share link</button>
     <button>Save design</button>
+    </div>
 </div>
 
     </div>

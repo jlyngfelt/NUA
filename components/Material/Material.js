@@ -49,7 +49,7 @@ export const Material = ({ handleOnClick, materialSelections = defaultMaterialSe
         </div>
       ))}
 
-      <ContinueButton onClick={handleOnClick}>Continue</ContinueButton>
+      {/* <ContinueButton onClick={handleOnClick}>Continue</ContinueButton> */}
     </div>
   );
 };
