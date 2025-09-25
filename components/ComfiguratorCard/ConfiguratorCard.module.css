@@ -1,8 +1,10 @@
 .configuratorCard {
-  padding: 1.25rem 2.5rem 0 2.5rem;
+  padding: 0rem 2.5rem 0 2.5rem;
   background: white;
   height: 700px;
   width: 50vw;
+  display: flex;
+  flex-direction: column;
 }
 
 .mainInfo {

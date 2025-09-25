@@ -8,6 +8,7 @@ export const Landingpage = () => {
       <div className={styles.imageContainer}>
         <Image
           src="/images/Landing_page_Image__button_left.png"
+          priority
           alt="Hoodie"
           width={0}
           height={0}
@@ -20,6 +21,7 @@ export const Landingpage = () => {
       <div className={styles.imageContainer}>
          <Image
           src="/images/Landing_page_Image__button_right.png"
+          priority
           alt="Hoodie"
           width={0}
           height={0}
