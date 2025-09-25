@@ -1,9 +1,8 @@
 .configuratorCard {
   padding: 1.25rem 2.5rem 0 2.5rem;
   background: white;
-height: 700px;
+  height: 700px;
   width: 50vw;
-  
 }
 
 .mainInfo {
@@ -62,11 +61,19 @@ height: 700px;
   display: flex;
   flex: 1;
   gap: 0.5rem;
-  margin-top: 0.5rem;
+  margin-top: 0.4rem;
   width: 100%;
   justify-content: space-between;
   align-self: stretch;
   flex-direction: column;
+  color: var(--Brand-Green-Dark, #2e3228);
+
+  /* Secondary button */
+  font-family: "Helvetica Neue";
+  font-size: 16px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
 }
 
 .configuratorButtons button {
@@ -75,7 +82,7 @@ height: 700px;
   /* min-width: 11.66669rem; */
   justify-content: center;
   align-items: center;
-  border: 1px solid #000;
+  border: 1px solid var(--Brand-Green-Dark, #2e3228);
   padding: 0.875rem 1rem;
   cursor: pointer;
 }
@@ -84,4 +91,26 @@ height: 700px;
   display: flex;
   flex-direction: row;
   gap: 0.5rem;
+}
+
+.smallButtons button {
+  display: flex;
+  flex-direction: row;
+  gap: 0.5rem;
+  border: 1px solid var(--Brand-Green-Dark, #2e3228);
+  background-color: transparent;
+  color: var(--Brand-Green-Dark, #2e3228);
+
+  /* Secondary button */
+  font-family: "Helvetica Neue";
+  font-size: 16px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+  transition: all 0.3s  ease-in-out;
+}
+
+.smallButtons button:hover {
+  background: var(--Brand-Green-Dark, #2E3228);
+  color: white;
 }

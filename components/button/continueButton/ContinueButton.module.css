@@ -1,16 +1,22 @@
 .button {
-  background-color: #000;
-  color: white;
   display: inline-flex;
-  /* width: 36.25rem; */
-  /* padding: 0.875rem 14.625rem; */
+  background: var(--Brand-Green-Dark, #2e3228);
   justify-content: center;
   align-items: center;
   gap: 0.625rem;
-  border: 1px solid #000;
+  border: 1px solid var(--Brand-Green-Dark, #2E3228);
   width: 100%; /* Eller max-width: 36.25rem; */
   padding: 0.875rem 1rem;
   cursor: pointer;
+  color: var(--Brand-White, #fff);
+
+  /* Primary button */
+  font-family: "Helvetica Neue";
+  font-size: 16px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: normal;
+  transition: all 0.3s  ease-in-out;
 }
 
 .button:hover {
@@ -18,7 +24,7 @@
   justify-content: center;
   align-items: center;
   gap: 0.625rem;
-  border: 1px solid #000;
-  color: black;
+   border: 1px solid var(--Brand-Green-Dark, #2e3228);
+    color: var(--Brand-Green-Dark, #2e3228);
   background: #fff;
 }

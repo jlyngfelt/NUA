@@ -8,7 +8,7 @@ export const Description = () => {
     </div>
     <div className={styles.descriptionContainerBox}>
     <h3>Sustainability</h3>
-    <h4>Crafted with care for the planet, this product is designed to minimize environmental impact without sacrificing comfort or performance. It’s made using recycled fibers and produced with resource-conscious methods that cut down on water, energy, and waste. Each piece comes from a Fair Trade Certified™ factory, supporting safe working conditions and fair wages for the people who make it.</h4>
+    <h4>Crafted with care for the planet, this product is designed to minimize environmental impact without sacrificing comfort or performance. It's made using recycled fibers and produced with resource-conscious methods that cut down on water, energy, and waste. Each piece comes from a Fair Trade Certified™ factory, supporting safe working conditions and fair wages for the people who make it.</h4>
     </div>
   </div>;
 };

@@ -1,0 +1,51 @@
+.button {
+  position: absolute;
+  top: 16px;
+  left: 16px;
+  z-index: 10;
+  display: inline-flex;
+  padding: 8px 16px;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  border-radius: 2px;
+  border: none;
+  background: transparent;
+  color: var(--Brand-Green-Dark, #2e3228);
+
+  /* Tertiary button */
+  font-family: "Helvetica Neue";
+  font-size: 16px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: normal;
+  transition: all 0.3s  ease-in-out;
+}
+
+.button path {
+  transition: all 0.3s  ease-in-out;
+}
+
+.button:hover {
+  color: var(--Brand-White, #fff);
+
+  /* Tertiary button */
+  font-family: "Helvetica Neue";
+  font-size: 16px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: normal;
+  display: inline-flex;
+  padding: 8px 16px;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  border-radius: 2px;
+  background: #a1a1a1;
+  cursor: pointer;
+}
+
+.button:hover path {
+  fill: white;
+  
+}

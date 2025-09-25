@@ -354,6 +354,132 @@ export const useHoodieModel = (
     controls.update();
   };
 
+  // Handle keyboard controls
+  useEffect(() => {
+    const keysPressed = new Set();
+    let animationId = null;
+
+    const smoothRotate = () => {
+      if (!controlsRef.current || !cameraRef.current) return;
+
+      const controls = controlsRef.current;
+      const camera = cameraRef.current;
+      let needsRender = false;
+
+      // Smaller increment for smoother movement
+      const rotationSpeed = Math.PI / 80;
+
+      if (keysPressed.has('ArrowLeft')) {
+        const spherical = new THREE.Spherical();
+        spherical.setFromVector3(camera.position.clone().sub(controls.target));
+        spherical.theta -= rotationSpeed;
+        const newPosition = new THREE.Vector3();
+        newPosition.setFromSpherical(spherical).add(controls.target);
+        camera.position.copy(newPosition);
+        camera.lookAt(controls.target);
+        needsRender = true;
+      }
+
+      if (keysPressed.has('ArrowRight')) {
+        const spherical = new THREE.Spherical();
+        spherical.setFromVector3(camera.position.clone().sub(controls.target));
+        spherical.theta += rotationSpeed;
+        const newPosition = new THREE.Vector3();
+        newPosition.setFromSpherical(spherical).add(controls.target);
+        camera.position.copy(newPosition);
+        camera.lookAt(controls.target);
+        needsRender = true;
+      }
+
+      if (keysPressed.has('ArrowUp')) {
+        const spherical = new THREE.Spherical();
+        spherical.setFromVector3(camera.position.clone().sub(controls.target));
+        spherical.phi = Math.max(0.1, spherical.phi - rotationSpeed);
+        const newPosition = new THREE.Vector3();
+        newPosition.setFromSpherical(spherical).add(controls.target);
+        camera.position.copy(newPosition);
+        camera.lookAt(controls.target);
+        needsRender = true;
+      }
+
+      if (keysPressed.has('ArrowDown')) {
+        const spherical = new THREE.Spherical();
+        spherical.setFromVector3(camera.position.clone().sub(controls.target));
+        spherical.phi = Math.min(Math.PI - 0.1, spherical.phi + rotationSpeed);
+        const newPosition = new THREE.Vector3();
+        newPosition.setFromSpherical(spherical).add(controls.target);
+        camera.position.copy(newPosition);
+        camera.lookAt(controls.target);
+        needsRender = true;
+      }
+
+      if (needsRender) {
+        controls.update();
+        if (rendererRef.current && sceneRef.current) {
+          rendererRef.current.render(sceneRef.current, camera);
+        }
+      }
+
+      // Continue animation if keys are pressed
+      if (keysPressed.size > 0) {
+        animationId = requestAnimationFrame(smoothRotate);
+      } else {
+        animationId = null;
+      }
+    };
+
+    const handleKeyDown = (event) => {
+      if (!controlsRef.current || !cameraRef.current) return;
+
+      switch (event.key) {
+        case 'ArrowLeft':
+        case 'ArrowRight':
+        case 'ArrowUp':
+        case 'ArrowDown':
+          event.preventDefault();
+          if (!keysPressed.has(event.key)) {
+            keysPressed.add(event.key);
+            if (!animationId) {
+              smoothRotate();
+            }
+          }
+          break;
+        case '+':
+        case '=':
+          event.preventDefault();
+          handleZoom('in');
+          break;
+        case '-':
+          event.preventDefault();
+          handleZoom('out');
+          break;
+      }
+    };
+
+    const handleKeyUp = (event) => {
+      switch (event.key) {
+        case 'ArrowLeft':
+        case 'ArrowRight':
+        case 'ArrowUp':
+        case 'ArrowDown':
+          keysPressed.delete(event.key);
+          break;
+      }
+    };
+
+    // Add keyboard event listeners
+    window.addEventListener('keydown', handleKeyDown);
+    window.addEventListener('keyup', handleKeyUp);
+
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+      window.removeEventListener('keyup', handleKeyUp);
+      if (animationId) {
+        cancelAnimationFrame(animationId);
+      }
+    };
+  }, []);
+
   // Initialize 3D scene
   useEffect(() => {
     if (!mountRef.current) return;
