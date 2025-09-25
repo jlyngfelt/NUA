@@ -55,10 +55,17 @@
 .viewButton {
   padding: 8px 16px;
   background-color: transparent;
-  color: black;
   border: none;
   border-radius: 4px;
   cursor: pointer;
+  color: var(--Brand-Green-Dark, #2E3228);
+
+/* Secondary button */
+font-family: "Helvetica Neue";
+font-size: 16px;
+font-style: normal;
+font-weight: 400;
+line-height: normal;
 }
 
 .indicatorContainer {

@@ -2,6 +2,33 @@
   border-radius: 12px;
   padding: 1.5rem;
   z-index: 10;
+  max-height: 445px; 
+  overflow-y: scroll;
+}
+
+/* Custom scrollbar for colorCustomizationPanel */
+.colorCustomizationPanel::-webkit-scrollbar {
+  width: 2px;
+}
+
+.colorCustomizationPanel::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.colorCustomizationPanel::-webkit-scrollbar-thumb {
+  background: #505841;
+  border-radius: 1px;
+  width: 2px;
+}
+
+.colorCustomizationPanel::-webkit-scrollbar-thumb:hover {
+  background: #505841;
+}
+
+/* Firefox support */
+.colorCustomizationPanel {
+  scrollbar-width: thin;
+  scrollbar-color: #505841 transparent;
 }
 
 .colorSection {

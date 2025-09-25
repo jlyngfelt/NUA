@@ -393,7 +393,6 @@ export const useHoodieModel = (
     // Key light - main directional light positioned like studio photography
     const keyLight = new THREE.DirectionalLight(0xffffff, 1.8);
     keyLight.position.set(8, 12, 6);
-    keyLight.castShadow = true;
     keyLight.shadow.mapSize.width = 4096;
     keyLight.shadow.mapSize.height = 4096;
     keyLight.shadow.camera.near = 0.1;
