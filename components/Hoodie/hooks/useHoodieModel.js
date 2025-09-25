@@ -617,7 +617,7 @@ export const useHoodieModel = (
         const center = box.getCenter(new THREE.Vector3());
 
         gltf.scene.position.copy(center.multiplyScalar(-1));
-        const initialDistance = size * 0.7;
+        const initialDistance = size * 1;
         initialDistanceRef.current = initialDistance;
         camera.position.set(0, 0, initialDistance);
         camera.lookAt(0, 0, 0);
