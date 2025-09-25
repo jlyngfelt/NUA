@@ -83,7 +83,7 @@ export const FitAndSize = ({ handleOnClick }) => {
     onClick={() => setActiveFit(1)}
   >
     <Image
-      src="/images/LooseFit.png"
+      src="/images/TightFit1.png"
       alt="Tight Fit Hoodie"
       width={0}
       height={0}
@@ -97,7 +97,7 @@ export const FitAndSize = ({ handleOnClick }) => {
     onClick={() => setActiveFit(2)}
   >
     <Image
-      src="/images/LooseFit.png"
+      src="/images/LooseFit1.png"
       alt="Loose Fit Hoodie"
       width={0}
       height={0}
