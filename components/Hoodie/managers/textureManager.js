@@ -72,8 +72,15 @@ export class TextureManager {
     if (gl) {
       this.preloadMaterialTextures({
         capabilities: {
-          getMaxAnisotropy: () =>
-            gl.getParameter(gl.MAX_TEXTURE_MAX_ANISOTROPY_EXT) || 16,
+          getMaxAnisotropy: () => {
+            const ext = gl.getExtension('EXT_texture_filter_anisotropic') ||
+                       gl.getExtension('MOZ_EXT_texture_filter_anisotropic') ||
+                       gl.getExtension('WEBKIT_EXT_texture_filter_anisotropic');
+            if (ext) {
+              return gl.getParameter(ext.MAX_TEXTURE_MAX_ANISOTROPY_EXT) || 16;
+            }
+            return 16; // Fallback value
+          },
         },
       });
     }
